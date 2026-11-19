@@ -1,0 +1,1387 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ody Mencari Sekolah</title>
+<style>
+:root{
+  --bg:#F2F2F7; --card:#FFFFFF; --card-2:#F9F9FB; --fill:rgba(120,120,128,.14); --fill-2:rgba(120,120,128,.08);
+  --label:#000000; --label-2:#6C6C70; --label-3:#8E8E93; --sep:rgba(60,60,67,.22);
+  --tint:#0068D6; --tint-soft:rgba(0,122,255,.12); --on-tint:#FFFFFF;
+  --green:#248A3D; --green-soft:rgba(52,199,89,.16); --orange:#B25000; --orange-soft:rgba(255,149,0,.16);
+  --red:#D70015; --red-soft:rgba(255,59,48,.13); --yellow:#8A6A00; --yellow-soft:rgba(255,204,0,.2);
+  --thumb:#FFFFFF; --thumb-shadow:0 3px 8px rgba(0,0,0,.12),0 1px 1px rgba(0,0,0,.04);
+  --navbg:rgba(249,249,251,.82);
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --card:#1C1C1E; --card-2:#232325; --fill:rgba(118,118,128,.26); --fill-2:rgba(118,118,128,.16);
+    --label:#FFFFFF; --label-2:#AEAEB2; --label-3:#8E8E93; --sep:rgba(84,84,88,.65);
+    --tint:#0A84FF; --tint-soft:rgba(10,132,255,.2); --on-tint:#FFFFFF;
+    --green:#30D158; --green-soft:rgba(48,209,88,.18); --orange:#FF9F0A; --orange-soft:rgba(255,159,10,.18);
+    --red:#FF453A; --red-soft:rgba(255,69,58,.18); --yellow:#FFD60A; --yellow-soft:rgba(255,214,10,.16);
+    --thumb:#636366; --thumb-shadow:0 3px 8px rgba(0,0,0,.3); --navbg:rgba(22,22,24,.82); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --card:#1C1C1E; --card-2:#232325; --fill:rgba(118,118,128,.26); --fill-2:rgba(118,118,128,.16);
+  --label:#FFFFFF; --label-2:#AEAEB2; --label-3:#8E8E93; --sep:rgba(84,84,88,.65);
+  --tint:#0A84FF; --tint-soft:rgba(10,132,255,.2); --on-tint:#FFFFFF;
+  --green:#30D158; --green-soft:rgba(48,209,88,.18); --orange:#FF9F0A; --orange-soft:rgba(255,159,10,.18);
+  --red:#FF453A; --red-soft:rgba(255,69,58,.18); --yellow:#FFD60A; --yellow-soft:rgba(255,214,10,.16);
+  --thumb:#636366; --thumb-shadow:0 3px 8px rgba(0,0,0,.3); --navbg:rgba(22,22,24,.82); color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:auto}
+body{margin:0;background:var(--bg);color:var(--label);font:17px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--navbg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--tint);outline-offset:2px;border-radius:8px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* nav bar */
+header.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--navbg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep)}
+.navrow{display:flex;align-items:center;gap:10px;padding:12px 0 10px;min-height:56px}
+.navrow h1{font-size:22px;font-weight:700;letter-spacing:-.02em;margin:0}
+.status{font-size:13px;color:var(--label-2);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.status .d{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.status[data-s="saving"] .d{background:var(--orange)}
+.status[data-s="error"] .d,.status[data-s="local"] .d{background:var(--red)}
+.spacer{flex:1}
+.navrow .views{flex:0 1 auto}
+.subbar{padding:0 0 10px;display:flex;flex-direction:column;gap:8px}
+.subbar:empty{display:none}
+.subrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.progress{font-size:13px;color:var(--label-2)}
+
+/* segmented control */
+.seg{display:inline-flex;background:var(--fill);border-radius:999px;padding:3px;gap:2px;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{border:0;background:transparent;border-radius:999px;padding:6px 16px;transition:background .2s,box-shadow .2s,transform .15s;font-size:14px;font-weight:500;white-space:nowrap;min-height:32px;color:var(--label)}
+.seg button[aria-pressed="true"]{background:var(--thumb);box-shadow:var(--thumb-shadow);font-weight:600}
+.seg.full{display:flex;width:100%}
+.seg.full button{flex:1}
+.seg.lg button{min-height:36px;font-size:15px}
+
+/* buttons */
+.btn{border:0;border-radius:10px;padding:8px 14px;font-size:15px;font-weight:600;min-height:36px;background:var(--fill);color:var(--tint)}
+.btn.filled{background:var(--tint);color:var(--on-tint)}
+.btn.plain{background:transparent;color:var(--tint);padding:8px 4px}
+.btn.destructive{color:var(--red)}
+.btn.small{font-size:14px;min-height:30px;padding:5px 12px}
+.btn:active{opacity:.7}
+.iconbtn{width:36px;height:36px;border-radius:50%;border:0;background:var(--fill);color:var(--tint);font-weight:700;font-size:16px}
+
+main{padding:20px 0 90px}
+.large{font-size:28px;font-weight:700;letter-spacing:-.02em;margin:8px 0 4px}
+.lede{color:var(--label-2);font-size:15px;margin:0 0 18px;max-width:62ch}
+section{margin-bottom:34px}
+.ghead{font-size:13px;color:var(--label-2);text-transform:none;margin:0 16px 7px;font-weight:500;display:flex;justify-content:space-between;align-items:end;gap:10px}
+.ghead b{color:var(--label);font-size:20px;font-weight:700;letter-spacing:-.02em}
+.gfoot{font-size:13px;color:var(--label-2);margin:7px 16px 0;max-width:72ch}
+.banner{background:var(--orange-soft);border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:15px}
+
+/* grouped list */
+.group{background:var(--card);border-radius:12px;overflow:hidden}
+.row{position:relative}
+.row + .row::before{content:"";position:absolute;top:0;left:16px;right:0;height:.5px;background:var(--sep)}
+.rowbtn{display:flex;align-items:center;gap:12px;width:100%;border:0;background:transparent;text-align:left;padding:11px 16px;min-height:52px}
+.rowbtn:active{background:var(--fill-2)}
+.rowmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.rowtitle{font-size:17px;font-weight:500;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rowsub{font-size:14px;color:var(--label-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rowsub.miss{color:var(--orange)}
+.chev{width:8px;height:13px;color:var(--label-3);flex:none;transition:transform .2s}
+[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.panel{padding:4px 16px 16px;display:grid;gap:12px;background:var(--card)}
+.field label,.flabel{display:block;font-size:13px;color:var(--label-2);margin:0 0 5px;font-weight:500}
+.hint{font-size:14px;color:var(--label-2);margin:0}
+input[type=text],textarea,select{width:100%;border:0;background:var(--fill-2);border-radius:10px;padding:10px 12px;font-size:16px}
+textarea{resize:vertical;min-height:84px;line-height:1.45}
+select{appearance:auto;width:auto;padding:8px 10px}
+.missdot{width:8px;height:8px;border-radius:50%;background:var(--orange);flex:none}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;font-size:13px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.chip.g{background:var(--green-soft);color:var(--green)}
+.chip.m{background:var(--yellow-soft);color:var(--yellow)}
+.chip.b{background:var(--red-soft);color:var(--red)}
+.chip.n{background:var(--fill-2);color:var(--label-2);font-weight:500}
+.tag{font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px}
+.tag.best{background:var(--green-soft);color:var(--green)}
+.tag.worst{background:var(--red-soft);color:var(--red)}
+
+/* ranking */
+.rankno{width:30px;height:30px;border-radius:50%;background:var(--fill);display:grid;place-items:center;font-weight:700;font-size:15px;flex:none}
+.rankrow.first .rankno{background:var(--tint);color:var(--on-tint)}
+.meter{height:6px;border-radius:999px;background:var(--fill);overflow:hidden;margin-top:6px;max-width:360px}
+.meter span{display:block;height:100%;background:var(--tint);border-radius:999px}
+.bigscore{font-size:30px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;text-align:right;line-height:1}
+.bigscore small{display:block;font-size:12px;font-weight:500;color:var(--label-2);letter-spacing:0;margin-top:3px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:15px}
+.kv dt{color:var(--label-2)}
+.kv dd{margin:0}
+.mini{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:15px;align-items:center}
+.concl{font-size:15px;white-space:pre-wrap;background:var(--fill-2);border-radius:10px;padding:10px 12px;margin:0}
+
+/* cost */
+.money{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;text-align:right;white-space:nowrap}
+.money small{display:block;font-size:12px;font-weight:500;color:var(--label-2);letter-spacing:0}
+.costline{display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:15px;padding:6px 0;border-top:.5px solid var(--sep)}
+.costline:first-child{border-top:0}
+.costline span:last-child{font-variant-numeric:tabular-nums;text-align:right}
+.costline small{grid-column:1/-1;color:var(--label-2);font-size:13px;margin-top:-2px}
+.formrow{display:flex;align-items:center;gap:12px;padding:8px 16px;min-height:50px}
+.formrow label{flex:1;font-size:16px}
+.formrow input[type=text]{width:170px;text-align:right;font-variant-numeric:tabular-nums}
+.formrow .wide{width:220px;text-align:left}
+.formrow .inline{display:flex;gap:6px}
+.formrow .inline input{width:130px}
+.formtotal{display:flex;justify-content:space-between;padding:12px 16px;font-weight:600;background:var(--card-2)}
+
+/* matrix */
+.scroll{overflow-x:auto;background:var(--card);border-radius:12px}
+table.matrix{border-collapse:collapse;width:100%;min-width:600px}
+.matrix th,.matrix td{text-align:left;vertical-align:top;padding:10px 14px;font-size:15px;border-top:.5px solid var(--sep)}
+.matrix thead th{border-top:0;font-size:13px;color:var(--label-2);font-weight:600}
+.matrix tbody th{font-weight:500;width:200px}
+.matrix tbody th small{display:block;color:var(--label-2);font-weight:400;font-size:12px}
+.matrix td{cursor:pointer;min-width:200px}
+.matrix td:hover{background:var(--fill-2)}
+.matrix .grp th{background:var(--card-2);font-size:13px;color:var(--label-2);font-weight:600;padding:6px 14px}
+.cellraw{margin-top:5px;color:var(--label-2);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cellraw.miss{color:var(--orange);font-weight:500}
+
+/* criteria page */
+.critrow{padding:12px 16px;display:grid;gap:8px}
+.critrow .ctrls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.critrow .ctrls .grow{flex:1;min-width:200px}
+.addrow{display:flex;gap:8px;padding:10px 16px}
+.addrow input{flex:1}
+.err{color:var(--red);font-size:14px;min-height:1.2em;margin:6px 16px 0}
+
+.emptystate{background:var(--card);border-radius:12px;padding:44px 24px;text-align:center}
+.emptystate p{color:var(--label-2);max-width:44ch;margin:6px auto 18px}
+
+/* dialogs */
+dialog{border:0;border-radius:14px;padding:0;width:min(420px,90vw);background:var(--card);color:var(--label);box-shadow:0 24px 64px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+.dlg{padding:20px 20px 16px}
+.dlg h2{font-size:18px;margin:0 0 6px;text-align:center}
+.dlg p{text-align:center;color:var(--label-2);font-size:15px;margin:0 0 14px}
+.dlg ol{padding-left:20px;margin:6px 0 10px;font-size:15px}
+.dlg li{margin:7px 0}
+.dlgact{display:flex;gap:8px;margin-top:14px}
+.dlgact .btn{flex:1}
+
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--card);color:var(--label);box-shadow:0 10px 30px rgba(0,0,0,.18);padding:10px 10px 10px 16px;border-radius:14px;display:flex;gap:12px;align-items:center;font-size:15px;z-index:20;max-width:92vw}
+.loading{color:var(--label-2);padding:40px 0}
+
+
+.brandwrap{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:46px;height:46px;flex:none;object-fit:cover;border-radius:12px;box-shadow:0 0 0 .5px var(--sep),0 2px 6px rgba(0,0,0,.12);animation:bob 4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-1.5px) rotate(-2deg)}}
+.brandwrap:hover .logo{animation-duration:1.4s}
+.brandwrap h1{font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.15}
+.navrow .views{flex:1;display:flex;justify-content:center;padding:0;min-width:0}
+
+.views .seg button{flex:1}
+.hero{background:var(--card);border-radius:20px;padding:22px;display:grid;gap:18px;margin-bottom:28px}
+.herotop{display:flex;gap:16px;align-items:center}
+.heroemoji{font-size:44px;line-height:1;width:72px;height:72px;border-radius:20px;background:var(--yellow-soft);display:grid;place-items:center;flex:none}
+.herolabel{font-size:15px;color:var(--label-2);margin:0}
+.heroname{font-size:30px;font-weight:700;letter-spacing:-.03em;margin:2px 0 2px;line-height:1.1}
+.herosub{font-size:15px;color:var(--label-2);margin:0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.stat{background:var(--fill-2);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:center;border:0;text-align:left;width:100%}
+button.stat:hover{background:var(--fill)}
+.stat .se{font-size:24px;line-height:1}
+.stat b{display:block;font-size:16px}
+.stat span{font-size:13px;color:var(--label-2)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--card);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.card.top{box-shadow:inset 0 0 0 2px var(--green)}
+.cardhead{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.cardname{font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0}
+.ring{--p:0;width:64px;height:64px;border-radius:50%;background:conic-gradient(var(--tint) calc(var(--p)*1%),var(--fill) 0);display:grid;place-items:center;flex:none}
+.ring span{width:52px;height:52px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:700;font-size:19px;font-variant-numeric:tabular-nums}
+.card.top .ring{background:conic-gradient(var(--green) calc(var(--p)*1%),var(--fill) 0)}
+.pillrow{display:flex;gap:6px;flex-wrap:wrap}
+.linkish{background:none;border:0;padding:0;color:var(--tint);font-weight:600;font-size:15px;text-align:left}
+.icon{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:18px;flex:none;line-height:1}
+.ic-blue{background:rgba(0,122,255,.14)}.ic-purple{background:rgba(175,82,222,.15)}.ic-green{background:rgba(52,199,89,.16)}.ic-teal{background:rgba(48,176,199,.16)}.ic-orange{background:rgba(255,149,0,.16)}.ic-gray{background:var(--fill)}
+.ghead .ge{margin-right:6px}
+.schoolhero{background:var(--card);border-radius:20px;padding:18px 20px;display:flex;gap:16px;align-items:center;margin-bottom:24px}
+.schoolhero .heroemoji{width:56px;height:56px;font-size:32px;border-radius:16px;background:var(--tint-soft)}
+.prog{height:6px;border-radius:999px;background:var(--fill);overflow:hidden;margin-top:8px}
+.prog span{display:block;height:100%;background:var(--green);border-radius:999px}
+.more{width:100%;border:0;background:transparent;color:var(--tint);font-weight:600;padding:12px 16px;text-align:left;font-size:15px}
+.collapse{display:flex;align-items:center;gap:12px;width:100%;border:0;background:var(--card);border-radius:14px;padding:14px 16px;text-align:left}
+.collapse b{flex:1;font-size:17px}
+.collapse span.count{color:var(--label-2);font-size:15px}
+
+/* navigation v3 */
+.tabs{display:inline-flex;gap:2px;background:var(--fill);border-radius:999px;padding:4px;position:relative;isolation:isolate;max-width:100%}
+.tabind{position:absolute;top:4px;bottom:4px;left:0;width:0;border-radius:999px;background:var(--thumb);box-shadow:var(--thumb-shadow);z-index:-1;transition:transform .38s cubic-bezier(.3,.8,.25,1),width .38s cubic-bezier(.3,.8,.25,1)}
+.tabind.noanim{transition:none}
+.tabs button{flex:0 0 auto;white-space:nowrap;border:0;background:transparent;border-radius:999px;min-height:36px;padding:7px 18px;font-size:15px;transition:color .2s;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:7px;color:var(--label);position:relative}
+.tabs button[aria-current="page"]{font-weight:600}
+.tabs button:not([aria-current="page"]):hover{color:var(--tint)}
+.badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--orange);color:#fff;font-size:12px;font-weight:700;display:inline-grid;place-items:center;font-variant-numeric:tabular-nums}
+.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--navbg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid var(--sep);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabbar button{flex:1;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--label-2);padding:4px 0;min-height:48px;position:relative}
+.tabbar button .ti{font-size:22px;line-height:1;filter:grayscale(1);opacity:.6}
+.tabbar button[aria-current="page"]{color:var(--tint)}
+.tabbar button[aria-current="page"] .ti{filter:none;opacity:1}
+.tabbar .badge{position:absolute;top:0;left:calc(50% + 8px);height:18px;min-width:18px;font-size:11px}
+.addbtn{display:inline-flex;align-items:center;gap:6px}
+.addbtn .plus{font-size:17px;line-height:1}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.chips::-webkit-scrollbar{display:none}
+.schip{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--fill-2);padding:7px 12px 7px 10px;font-size:15px;font-weight:500;white-space:nowrap;min-height:38px;box-shadow:inset 0 0 0 1.5px transparent}
+.schip[aria-pressed="true"]{background:var(--card);box-shadow:inset 0 0 0 2px var(--tint);font-weight:600}
+.schip .ok{color:var(--green);font-weight:700;font-size:13px}
+.schip .cnt{font-size:12px;font-weight:700;color:var(--orange);background:var(--orange-soft);border-radius:999px;padding:1px 7px}
+.toolrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.toggle{border:0;border-radius:999px;background:var(--fill-2);padding:6px 12px;font-size:14px;font-weight:500;min-height:34px;display:inline-flex;align-items:center;gap:8px}
+.toggle .sw{width:30px;height:18px;border-radius:999px;background:var(--fill);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--green)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(12px)}
+.btn.tinted{background:var(--tint-soft);color:var(--tint)}
+.cardact{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}
+.panelfoot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-top:4px}
+
+/* layout v4 */
+main{padding-top:24px}
+section{scroll-margin-top:calc(var(--navh,120px) + 16px)}
+.dash{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px 24px;align-items:start}
+.dash > *{margin:0}
+.span2{grid-column:1/-1}
+.col{display:grid;gap:28px;align-content:start}
+.col > section{margin:0}
+.hero{margin:0;grid-template-columns:minmax(0,1fr) auto;align-items:center;padding:20px 22px;gap:20px}
+.hero .stats{grid-template-columns:repeat(3,minmax(150px,1fr))}
+.heroemoji{width:60px;height:60px;font-size:34px;border-radius:18px}
+.heroname{font-size:28px}
+.stat{padding:10px 12px}
+.cards{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.card{padding:16px}
+.chartcard{padding:16px}
+.recnote{font-size:13px;color:var(--label-2);margin:8px 16px 0;display:flex;gap:6px 12px;flex-wrap:wrap}
+.recnote .tag{font-size:11px}
+.tag.mid{background:var(--yellow-soft);color:var(--yellow)}
+.tag.low{background:var(--orange-soft);color:var(--orange)}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:12px 16px}
+.prow .pname{font-weight:600;display:flex;align-items:center;gap:8px;min-width:0}
+.prow .pmeta{font-size:13px;color:var(--label-2)}
+.prow .prog{grid-column:1/2;margin-top:2px}
+.prow .btn{grid-row:1/4;grid-column:2}
+.splitpage{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start}
+.side{position:sticky;top:calc(var(--navh,120px) + 16px);display:grid;gap:16px;max-height:calc(100vh - var(--navh,120px) - 32px);overflow:auto;padding-bottom:8px}
+.side h3{font-size:13px;color:var(--label-2);font-weight:600;margin:0 4px 6px}
+.slist{display:grid;gap:4px}
+.sitem{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center;border:0;background:transparent;border-radius:12px;padding:10px 12px;text-align:left;width:100%}
+.sitem:hover{background:var(--fill-2)}
+.sitem[aria-pressed="true"]{background:var(--card);box-shadow:inset 0 0 0 2px var(--tint)}
+.sitem .nm{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sitem .prog{grid-column:2/4;margin:4px 0 0;height:4px}
+.jump{display:grid;gap:2px}
+.jump button{display:flex;align-items:center;gap:10px;border:0;background:transparent;border-radius:10px;padding:8px 10px;font-size:15px;text-align:left;width:100%}
+.jump button:hover{background:var(--fill-2)}
+.jump .jc{margin-left:auto;font-size:13px;color:var(--label-2);font-variant-numeric:tabular-nums}
+.jump .jc.full{color:var(--green);font-weight:600}
+.sidebtns{display:grid;gap:8px}
+.sidebtns .btn,.sidebtns .toggle{width:100%;justify-content:flex-start}
+.schoolhero{margin-bottom:24px}
+.critgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}
+.critgrid .critrow{background:var(--card);border-radius:14px}
+.pagehead{display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.pagehead .large{margin:0}
+.pagehead form{display:flex;gap:8px;min-width:min(420px,100%)}
+@media (min-width:1001px){ .subbar{display:none} }
+@media (max-width:1000px){
+  .dash,.splitpage{grid-template-columns:1fr}
+  .side{display:none}
+  .hero{grid-template-columns:1fr}
+  .hero .stats{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+}
+
+/* responsive header */
+@media (max-width:1100px){ .tabs button{padding:7px 14px;font-size:14px} }
+@media (max-width:900px){ .status{display:none} .brandwrap h1{font-size:16px} .lbl-d{display:none} .addbtn{width:40px;height:40px;padding:0;justify-content:center;border-radius:50%} .tabs button{padding:7px 12px} }
+@media (max-width:760px) and (min-width:641px){ .tabs button span[aria-hidden]{display:none} }
+@media (max-width:640px){
+  .views{display:none}
+  .tabbar{display:flex}
+  main{padding-bottom:110px}
+  .wrap{padding:0 16px}
+  .critgrid{grid-template-columns:1fr}
+  .lbl-d{display:none}
+  .addbtn{width:40px;height:40px;padding:0;justify-content:center;border-radius:50%}
+  .toast{bottom:calc(80px + env(safe-area-inset-bottom,0px))}
+
+  
+  .views .seg{max-width:none}
+  .brandwrap h1{font-size:17px}
+  .heroname{font-size:24px}
+  .hero{padding:18px}
+  .formrow{flex-wrap:wrap}
+  .formrow input[type=text],.formrow .wide{width:100%;text-align:left}
+  .formrow .inline{width:100%}.formrow .inline input{flex:1;width:auto}
+  .bigscore{font-size:24px}
+}
+
+/* charts */
+.chartcard{background:var(--card);border-radius:20px;padding:18px 18px 14px;margin-bottom:12px}
+.race{display:grid;gap:14px}
+.lane{display:grid;grid-template-columns:minmax(80px,140px) 1fr 44px;gap:12px;align-items:center}
+.lanename{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{position:relative;height:40px;border-radius:999px;background:repeating-linear-gradient(90deg,var(--fill) 0 10px,transparent 10px 20px) center/100% 3px no-repeat,var(--fill-2)}
+.track::after{content:"🏁";position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:18px}
+.trail{position:absolute;left:4px;top:50%;height:8px;transform:translateY(-50%);border-radius:999px;background:var(--c);opacity:.35;width:calc((100% - 48px) * var(--p) / 100);animation:grow 1.1s cubic-bezier(.2,.8,.2,1) both}
+.runner{position:absolute;top:50%;left:calc((100% - 48px) * var(--p) / 100);transform:translate(-2px,-50%);width:36px;height:36px;border-radius:50%;background:var(--c);display:grid;place-items:center;font-size:19px;box-shadow:0 3px 8px rgba(0,0,0,.18);animation:run 1.1s cubic-bezier(.2,.8,.2,1) both}
+.seg.lv5 button{white-space:normal;line-height:1.2;font-size:13px;padding:6px 8px}
+.runner .car{display:inline-block;transform:scaleX(-1)}
+:root{--rec-best:#34C759;--rec-mid:#FFCC00;--rec-low:#FF9500;--rec-worst:#FF3B30}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--rec-best:#30D158;--rec-mid:#FFD60A;--rec-low:#FF9F0A;--rec-worst:#FF453A}}
+:root[data-theme="dark"]{--rec-best:#30D158;--rec-mid:#FFD60A;--rec-low:#FF9F0A;--rec-worst:#FF453A}
+.trail{opacity:.45}
+.runner .crown{position:absolute;top:-15px;font-size:15px;animation:float 2.4s ease-in-out infinite}
+.lanescore{font-size:20px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+@keyframes run{from{left:0}}
+@keyframes grow{from{width:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.stack{display:grid;gap:16px}
+.stackrow .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.stackrow .top b{font-size:16px}
+.stackrow .top span{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.bars{display:flex;height:30px;border-radius:10px;overflow:hidden;background:var(--fill-2);gap:2px}
+.bars .seg2{height:100%;display:grid;place-items:center;font-size:14px;min-width:0;transform-origin:left;animation:sx .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sx{from{transform:scaleX(0)}}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:14px;font-size:13px;color:var(--label-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.h2h{display:grid;gap:4px}
+.h2hrow{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:12px;align-items:center;padding:6px 0}
+.h2hrow + .h2hrow{border-top:.5px solid var(--sep)}
+.h2hlabel{font-size:14px;display:flex;align-items:center;gap:8px}
+.h2hlabel .icon{width:26px;height:26px;font-size:15px;border-radius:7px}
+.scale5{position:relative;height:30px;margin:0 14px}
+.scale5::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;transform:translateY(-50%);border-radius:999px;background:linear-gradient(90deg,var(--red-soft),var(--yellow-soft),var(--green-soft))}
+.tick{position:absolute;top:50%;width:6px;height:6px;border-radius:50%;background:var(--label-3);transform:translate(-50%,-50%);opacity:.5}
+.dot{position:absolute;top:50%;width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;border:2px solid var(--card);transform:translate(-50%,-50%);box-shadow:0 2px 5px rgba(0,0,0,.18);transition:left .5s}
+.scalelab{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:12px;font-size:12px;color:var(--label-2);margin-bottom:4px}
+.scalelab div{display:flex;justify-content:space-between;margin:0 14px}
+.sdot{width:12px;height:12px;border-radius:50%;display:inline-block;background:var(--c)}
+@media (max-width:640px){.lane{grid-template-columns:1fr 40px}.lanename{grid-column:1/-1}.h2hrow,.scalelab{grid-template-columns:1fr}.scalelab>span{display:none}}
+
+/* motion */
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes panelIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,16px) scale(.96)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes dlgIn{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+#app.enter{animation:viewIn .35s cubic-bezier(.2,.8,.2,1)}
+.panel{animation:panelIn .24s cubic-bezier(.2,.8,.2,1)}
+.pop{animation:pop .28s cubic-bezier(.3,.7,.3,1.4)}
+.toast{animation:toastIn .3s cubic-bezier(.2,.8,.2,1)}
+dialog[open]{animation:dlgIn .22s cubic-bezier(.2,.8,.2,1)}
+dialog[open]::backdrop{animation:fadeIn .22s ease}
+.btn,.iconbtn,.stat,.sitem,.schip,.toggle,.jump button{transition:transform .15s ease,background .2s,box-shadow .2s,opacity .2s}
+.btn:active,.iconbtn:active,.schip:active,.toggle:active,.seg button:active{transform:scale(.96)}
+.card{transition:transform .2s ease,box-shadow .2s ease}
+@media (hover:hover){.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08)}}
+.rowbtn{transition:background .15s}
+
+/* spacing system: 8pt grid. Header → content 32 (desktop), 24 (tablet), 20 (phone); sections 32 apart */
+:root{--sp-top:32px;--sp-sec:32px}
+@media (max-width:1000px){:root{--sp-top:24px;--sp-sec:28px}}
+@media (max-width:640px){:root{--sp-top:20px;--sp-sec:24px}}
+.navrow{padding:12px 0;min-height:64px}
+.subbar{padding:0 0 12px;gap:10px}
+main{padding-top:var(--sp-top)}
+#app > :first-child{margin-top:0}
+section{margin-bottom:var(--sp-sec);scroll-margin-top:calc(var(--navh,120px) + var(--sp-top))}
+.dash{gap:var(--sp-sec) 24px}
+.dash section,.col > section{margin-bottom:0}
+.col{gap:var(--sp-sec)}
+.splitpage{gap:var(--sp-sec)}
+.side{top:calc(var(--navh,120px) + var(--sp-top));max-height:calc(100vh - var(--navh,120px) - var(--sp-top) * 2)}
+.schoolhero{margin-bottom:var(--sp-sec)}
+.pagehead{margin-bottom:24px}
+.ghead{margin:0 4px 10px}
+.gfoot{margin:10px 4px 0}
+.banner{margin-bottom:var(--sp-top)}
+.recnote{margin:12px 4px 0}
+
+/* fix: .wrap padding shorthand was resetting main's vertical padding */
+main.wrap{padding-top:var(--sp-top);padding-bottom:96px}
+.col{grid-template-columns:minmax(0,1fr)}
+.formrow .inline input{min-width:0}
+.formrow .inline{min-width:0;max-width:100%}
+.hero{grid-template-columns:minmax(0,1fr) minmax(0,1.55fr)}
+.hero .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:1000px){.dash,.splitpage{grid-template-columns:minmax(0,1fr)}.hero{grid-template-columns:minmax(0,1fr)}.hero .stats{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+@media (max-width:640px){.navrow .views{display:none} main.wrap{padding-bottom:120px} .hero .stats{grid-template-columns:minmax(0,1fr);gap:8px} .hero{gap:16px;padding:18px}}
+
+/* ===== bento ===== */
+.bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:stretch}
+.bento > *{margin:0}
+.kpi{grid-column:span 3;background:var(--card);border-radius:24px;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;gap:22px;min-height:150px}
+.kpi.accent{background:var(--tint);color:#fff}
+.kpitop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.kicon{width:40px;height:40px;border-radius:12px;background:var(--fill-2);display:grid;place-items:center;font-size:20px}
+.kpi.accent .kicon{background:rgba(255,255,255,.2)}
+.karrow{width:36px;height:36px;border-radius:50%;border:1px solid var(--sep);background:transparent;color:var(--label);display:grid;place-items:center;font-size:16px;font-weight:600;transition:transform .2s,background .2s}
+.karrow:hover{background:var(--fill-2);transform:rotate(-8deg)}
+.kpi.accent .karrow{border-color:rgba(255,255,255,.55);color:#fff}
+.kpi.accent .karrow:hover{background:rgba(255,255,255,.18)}
+.kval{margin:0;font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.klabel{margin:6px 0 0;font-size:14px;color:var(--label-2)}
+.kpi.accent .klabel{color:rgba(255,255,255,.85)}
+.kdelta{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:0}
+.kdelta.g{background:var(--green-soft);color:var(--green)}
+.kdelta.o{background:var(--orange-soft);color:var(--orange)}
+.kavatars{display:inline-flex}
+.kavatars span{width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;border:2px solid var(--card);margin-left:-6px}
+.kavatars span:first-child{margin-left:0}
+.bcard{background:var(--card);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.b7{grid-column:span 7}.b5{grid-column:span 5}.b12{grid-column:span 12}
+.bstack{display:flex;flex-direction:column;gap:16px;min-width:0}
+.bcard .recnote + .cards{margin-top:4px}
+.bhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.bhead h2{margin:0;font-size:18px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.bicon{width:34px;height:34px;border-radius:10px;background:var(--fill-2);display:grid;place-items:center;font-size:17px}
+.bpill{font-size:13px;color:var(--label-2);background:var(--fill-2);padding:5px 12px;border-radius:999px;font-weight:500}
+.bfoot{margin:auto 0 0;font-size:13px;color:var(--label-2)}
+.btn.outline{background:transparent;color:var(--label);box-shadow:inset 0 0 0 1px var(--sep);border-radius:999px}
+.btn.outline:hover{background:var(--fill-2)}
+.bcard .chartcard{background:transparent;padding:0;margin:0;border-radius:0}
+.bcard .recnote{margin:0}
+.blist{background:var(--fill-2);border-radius:16px;overflow:hidden}
+.blist .row + .row::before{left:16px}
+.bcard .cards{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.bcard .card{background:var(--fill-2)}
+.bcard .card .ring span{background:var(--card-2)}
+.bcard .scroll{background:var(--fill-2)}
+.bcard .h2h{margin-top:4px}
+@media (max-width:1100px){ .kpi{grid-column:span 6} .b7,.b5{grid-column:span 12} }
+@media (max-width:640px){ .bento{gap:12px} .kpi{grid-column:span 6;min-height:0;padding:16px;gap:16px;border-radius:20px} .kpi.accent,.kpi.kcost{grid-column:span 12} .kval{font-size:22px} .bcard{padding:16px;border-radius:20px} }
+@media (max-width:340px){ .kpi{grid-column:span 12} }
+
+/* simplify */
+.rcards{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding:0 2px;padding:2px 2px 6px;margin:0 -2px;scrollbar-width:thin;scrollbar-color:var(--fill) transparent;cursor:grab;-webkit-overflow-scrolling:touch}
+.rcards.dragging{cursor:grabbing;scroll-snap-type:none;user-select:none}
+.rcards::-webkit-scrollbar{height:6px}
+.rcards::-webkit-scrollbar-thumb{background:var(--fill);border-radius:999px}
+.rcards > .rcard{flex:0 0 240px;scroll-snap-align:start}
+@media (max-width:640px){.rcards > .rcard{flex-basis:78%}}
+.rcard{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;border:0;background:var(--fill-2);border-radius:16px;padding:14px 14px 12px;width:100%;transition:background .2s,transform .2s}
+.rcard:hover{background:var(--fill)}
+.rcard:active{transform:scale(.98)}
+.rcard.top{box-shadow:inset 0 0 0 2px var(--green)}
+.rtop{display:flex;align-items:center;gap:8px;width:100%}
+.rtop b{flex:1;font-size:16px}
+.rline{display:flex;gap:8px;font-size:14px;color:var(--label-2);line-height:1.35}
+.bfootrow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:auto}
+.bfootrow .bfoot{margin:0;flex:1}
+details.info{font-size:13px;color:var(--label-2);flex:none;max-width:100%}
+details.info summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--fill-2);font-weight:500}
+details.info summary::before{content:"ⓘ";font-size:13px}
+details.info summary::-webkit-details-marker{display:none}
+details.info[open]{flex-basis:100%}
+details.info .recnote{margin:10px 0 0}
+.ctoggle{display:block;width:100%;border:0;background:transparent;padding:6px 0;text-align:left;border-radius:12px}
+.ctoggle .top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ctoggle .top b{font-size:15px}
+.camt{margin-left:auto;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;line-height:1.15}
+.camt small{display:block;font-size:12px;font-weight:500;color:var(--label-2)}
+.ctoggle .bars{display:flex}
+.cdetail{margin-top:10px;background:var(--fill-2);border-radius:14px;padding:10px 14px;display:grid;gap:4px;animation:panelIn .24s cubic-bezier(.2,.8,.2,1)}
+.cdetail .btn{justify-self:start;margin-top:6px}
+.cpend{display:flex;align-items:center;gap:8px;width:100%;border:0;background:var(--fill-2);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:15px;font-weight:600;text-align:left}
+.cpend > span:not(.sdot){margin-left:auto;font-size:13px;font-weight:500;color:var(--orange)}
+
+/* pixel polish: 4/8pt rhythm */
+.bento{align-items:start}
+.bento > .kpi{align-self:stretch}
+.bento section{margin:0}
+.kpi{padding:20px;gap:20px;border-radius:24px}
+@media (max-width:640px){.kpi{padding:16px;gap:16px;border-radius:20px}.bcard{padding:16px}.kval{font-size:22px}}
+.kicon,.karrow{width:36px;height:36px}
+.kicon{border-radius:10px;font-size:18px}
+.kval{font-size:26px}
+.klabel{margin-top:6px;font-size:14px;line-height:1.35}
+.bcard{padding:20px;gap:16px}
+.bhead h2{gap:10px;font-size:17px}
+.bicon{width:36px;height:36px;border-radius:10px;font-size:18px}
+.bpill{padding:4px 10px;font-size:12px}
+.tag{font-size:12px;line-height:1.4;padding:2px 8px;font-weight:600}
+.ctoggle{padding:0}
+.ctoggle .top{gap:8px;margin-bottom:10px;min-height:36px}
+.stackrow .top span.tag{font-size:11px;font-weight:600;padding:1px 7px;line-height:1.5;letter-spacing:0}
+.stackrow .top span.camt{font-size:17px}
+.stackrow .top span.camt small{font-size:12px}
+.ctoggle .bars{height:28px}
+.stack{gap:16px}
+.legend{margin-top:16px;gap:6px 14px}
+.race{gap:12px;padding-top:8px}
+.track{height:40px}
+.rcards{gap:12px}
+.rcard{padding:14px 16px;gap:8px;border-radius:16px}
+.rline{gap:8px}
+.bfootrow{gap:12px;align-items:center}
+.prow .pname{font-size:15px}
+.prow{grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:6px;padding:14px 16px}
+.prow .pname{grid-column:1;grid-row:1}
+.prow > .btn,.prow > .chip{grid-column:2;grid-row:1;justify-self:end}
+.prow .pmeta{grid-column:1/-1;grid-row:2}
+.prow .prog{grid-column:1/-1;grid-row:3;margin:0}
+.blist{border-radius:16px}
+.cdetail{padding:12px 14px}
+.critlist2 .ghead b{display:flex;align-items:center}
+.sidecard{background:var(--card);border-radius:16px;padding:14px 16px}
+.sidecard .kval,.sidecard .klabel{margin:0}
+@media (min-width:1001px){.mreset{display:none}}
+
+.btile{grid-column:span 3;aspect-ratio:1/1;border:0;text-align:left;justify-content:space-between;color:var(--label);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.btile:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.btile:hover .karrow{background:var(--fill-2);transform:rotate(-8deg)}
+.btile:active{transform:scale(.98)}
+.btile .ttitle{display:block;font-size:20px;font-weight:700;letter-spacing:-.02em}
+dialog.wide{width:min(1040px,94vw);max-height:88vh}
+.dlg.wide{padding:20px;overflow:auto;max-height:88vh}
+.dlg.wide .bhead h2{font-size:18px;display:flex;align-items:center;gap:10px}
+@media (max-width:1100px){.btile{grid-column:span 6;aspect-ratio:auto;min-height:180px}}
+@media (max-width:640px){.btile{grid-column:span 12;min-height:150px}}
+
+/* bento v2: 8/4 rows, equal heights */
+.bento{align-items:stretch}
+.b8{grid-column:span 8}.b4{grid-column:span 4}
+.bento > .bcard{height:100%}
+.bcard > .bfoot{margin-top:auto}
+.btile{aspect-ratio:auto;grid-column:span 4;justify-content:flex-start}
+.btile .bhead{width:100%}
+.btile > .klabel{margin-top:auto}
+.tag{white-space:nowrap}
+.mprev{display:grid;gap:12px;width:100%;background:var(--fill-2);border-radius:16px;padding:14px}
+.mcap{font-size:12px;font-weight:600;color:var(--label-2)}
+.mrow{display:grid;gap:6px}
+.mlabel{font-size:13px;color:var(--label);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mscale{position:relative;height:14px;margin:0 7px;background:linear-gradient(90deg,var(--red-soft),var(--yellow-soft),var(--green-soft)) center/100% 4px no-repeat;border-radius:999px}
+.mdot{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--c);border:2px solid var(--fill-2);transform:translate(-50%,-50%);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.blist .prow .pname{min-width:0}
+@media (max-width:1100px){ .b8,.b4,.btile{grid-column:span 12} .btile{min-height:0} }
+
+.mcta{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:auto;padding:10px 14px;border-radius:12px;background:var(--tint-soft);color:var(--tint);font-weight:600;font-size:14px;transition:background .2s}
+.btile:hover .mcta{background:var(--tint);color:#fff}
+.mlegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--label-2);margin-top:-4px}
+@media (max-width:640px){.navrow .iconbtn{margin-left:auto}.navrow .brandwrap{min-width:0}.navrow .brandwrap h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+.mlegend > span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.mlegend .sdot{width:10px;height:10px;border-radius:50%;background:var(--c);display:inline-block}
+.mprev .mrow[hidden]{display:none}
+
+.mscale{height:22px;margin:0 11px}
+.mdot{width:22px;height:22px;color:#fff;font-size:9px;font-weight:700;display:grid;place-items:center;letter-spacing:-.02em;line-height:1}
+.ldot{width:22px;height:22px;border-radius:50%;background:var(--c);color:#fff;font-size:9px;font-weight:700;display:inline-grid;place-items:center;letter-spacing:-.02em}
+.dot{font-size:10px;letter-spacing:-.02em}
+.kavatars span{font-size:10px;letter-spacing:-.02em}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <div class="navrow">
+      <div class="brandwrap">
+        <img class="logo" src="data:image/jpeg;base64,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" alt="Foto Ody" width="46" height="46">
+        <div><h1>Ody Mencari Sekolah</h1>
+        <span class="status" id="status" data-s="idle" role="status" aria-live="polite"><span class="d"></span><span id="statusText">Memuat…</span></span></div>
+      </div>
+      <nav class="views" id="viewseg" aria-label="Halaman"></nav>
+      <button class="iconbtn" data-act="help" aria-label="Cara pakai" title="Cara pakai">?</button>
+      <button class="btn filled addbtn" data-act="add-school" aria-label="Tambah sekolah"><span aria-hidden="true" class="plus">＋</span><span class="lbl-d">Tambah sekolah</span></button>
+    </div>
+    <div class="subbar" id="subbar"></div>
+  </div>
+</header>
+
+<main class="wrap" id="app"><p class="loading">Memuat data…</p></main>
+
+<dialog id="dlgAdd" aria-labelledby="addTitle">
+  <form class="dlg" id="formAdd">
+    <h2 id="addTitle">Tambah sekolah</h2>
+    <p>Sekolah baru otomatis dinilai dengan kriteria yang sama.</p>
+    <input type="text" id="newName" autocomplete="off" placeholder="Nama sekolah" aria-label="Nama sekolah">
+    <div class="err" id="addErr" style="margin:6px 0 0"></div>
+    <div class="dlgact">
+      <button class="btn" type="button" data-act="close-dlg">Batal</button>
+      <button class="btn filled" type="submit">Tambah</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgConfirm" aria-labelledby="cfTitle">
+  <div class="dlg">
+    <h2 id="cfTitle"></h2>
+    <p id="cfBody"></p>
+    <div class="dlgact">
+      <button class="btn" data-act="close-dlg">Batal</button>
+      <button class="btn filled" id="cfOk" style="background:var(--red)"></button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlgCmp" class="wide" aria-labelledby="cmpTitle">
+  <div class="dlg wide">
+    <div class="bhead" style="margin-bottom:14px"><h2 id="cmpTitle" style="text-align:left;margin:0"><span class="bicon" aria-hidden="true">🥊</span>Adu per kriteria</h2><button class="iconbtn" data-act="close-dlg" aria-label="Tutup">✕</button></div>
+    <div id="dlgCmpBody"></div>
+  </div>
+</dialog>
+
+<dialog id="dlgHelp" aria-labelledby="helpTitle">
+  <div class="dlg">
+    <h2 id="helpTitle">Cara pakai</h2>
+    <ol>
+      <li>Di <b>Data sekolah</b>, pilih sekolah di atas lalu ketuk kriteria untuk membaca atau menambah data mentah dan memberi nilai.</li>
+      <li>Pilih <b>Belum lengkap</b> untuk melihat data yang masih perlu ditanyakan ke sekolah.</li>
+      <li><b>Ringkasan</b> menampilkan peringkat, total biaya sampai lulus, dan tabel perbandingan. Ketuk sel tabel untuk mengubahnya.</li>
+      <li>Atur seberapa penting tiap kriteria di <b>Kriteria</b>. Kriteria baru berlaku untuk semua sekolah.</li>
+    </ol>
+    <p style="text-align:left;margin:0">Skor hanya dihitung dari kriteria yang sudah dinilai di semua sekolah supaya adil. Semua perubahan tersimpan otomatis.</p>
+    <div class="dlgact"><button class="btn filled" data-act="close-dlg">Mengerti</button></div>
+  </div>
+</dialog>
+
+<nav class="tabbar" id="tabbar" aria-label="Halaman"></nav>
+<div id="toastHost"></div>
+<script>
+const DEFAULT_CRITERIA = [
+  {id:"jarak", group:"Logistik", label:"Jarak & waktu tempuh", type:"score", weight:2, hint:"Berapa km dan berapa menit dari rumah?"},
+  {id:"jam", group:"Logistik", label:"Jam sekolah", type:"score", weight:3, hint:"Jam masuk dan pulang. Cukup jeda untuk les bahasa Inggris jam 13.30?"},
+  {id:"antar", group:"Logistik", label:"Layanan antar-jemput", type:"yesno", weight:1, hint:"Ada layanan antar-jemput? Jangkauannya sampai mana?"},
+  {id:"effort", group:"Logistik", label:"Effort harian orang tua", type:"effort", weight:2, hint:"Seberapa berat rutinitas antar, bekal, dan acara sekolah untuk orang tua?"},
+  {id:"kurikulum", group:"Pembelajaran", label:"Kurikulum", type:"score", weight:2, hint:"Kurikulum apa yang dipakai?"},
+  {id:"inggris", group:"Pembelajaran", label:"Bahasa Inggris & bilingual", type:"score", weight:2, hint:"Ada pelajaran bahasa Inggris, native speaker, atau program bilingual?"},
+  {id:"agama", group:"Pembelajaran", label:"Pendidikan agama & mengaji", type:"score", weight:3, hint:"Target mengaji, hafalan, dan praktik ibadah."},
+  {id:"metode", group:"Pembelajaran", label:"Metode belajar & project", type:"score", weight:2, hint:"Sentra, project, outing, cara guru mengajar."},
+  {id:"ekskul", group:"Pembelajaran", label:"Ekstrakurikuler & acara", type:"score", weight:1, hint:"Ekskul wajib dan pilihan, pentas, wisuda."},
+  {id:"rasio", group:"Perhatian ke anak", label:"Rasio guru dan anak", type:"score", weight:2, hint:"Berapa anak per kelas dan berapa guru pendamping?"},
+  {id:"karakter", group:"Perhatian ke anak", label:"Pembentukan karakter & psikologi", type:"score", weight:2, hint:"Ada program adab, aturan kelas, atau layanan konsultasi psikologi?"},
+  {id:"laporan", group:"Perhatian ke anak", label:"Laporan & komunikasi orang tua", type:"score", weight:1, hint:"Seberapa sering laporan? Ada pertemuan dengan orang tua?"},
+  {id:"fasilitas", group:"Lingkungan", label:"Fasilitas & ruang bermain", type:"score", weight:2, hint:"Bagaimana ruang kelas, area outdoor, dan taman bermainnya?"},
+  {id:"makan", group:"Lingkungan", label:"Makan", type:"score", weight:1, hint:"Catering dari sekolah atau bawa bekal dari rumah?"},
+  {id:"biaya", group:"Biaya & pendaftaran", label:"Biaya", type:"biaya", weight:3, hint:"Berapa uang pangkal, SPP, uang kegiatan, dan biaya tambahan?"},
+  {id:"ppdb", group:"Biaya & pendaftaran", label:"Tes masuk (PPDB)", type:"note", weight:0, hint:"Seperti apa proses dan tes masuknya?"}
+];
+const TYPES = {
+  score:{name:"Skor 1–5", desc:"1 kurang, 5 sangat baik"},
+  yesno:{name:"Ya / Tidak", desc:"Ya dihitung 5, tidak dihitung 1"},
+  effort:{name:"Effort", desc:"Sangat ringan 5 sampai sangat berat 1. Makin ringan makin baik"},
+  biaya:{name:"Tingkat biaya", desc:"Sangat murah 5 sampai sangat mahal 1. Makin murah makin baik"},
+  note:{name:"Catatan saja", desc:"Tidak dihitung ke skor"}
+};
+const WEIGHTS = [[0,"Tidak dihitung"],[1,"1 · Biasa"],[2,"2 · Penting"],[3,"3 · Sangat penting"]];
+
+const state = {criteria: DEFAULT_CRITERIA.map(c=>({...c})), years:2, cmpMode:"grafik", schools:[], view:"bandingkan", active:null, filter:"all", open:new Set(), loading:true, dbOk:false, note:"", focusCrit:null};
+let db = null;
+const dirty = {}, saveTimers = {}, chains = {};
+let lastSig = "";
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone = o => JSON.parse(JSON.stringify(o || {}));
+const val = (s, cid) => { const v = s.eval && s.eval[cid] && s.eval[cid].v; return typeof v === "number" ? v : null; };
+const raw = (s, cid) => (s.raw && s.raw[cid]) || "";
+const scorable = () => state.criteria.filter(c => c.type !== "note" && +c.weight > 0);
+const counts = c => c.type !== "note" && +c.weight > 0;
+const incomplete = (s, c) => !raw(s, c.id).trim() || (counts(c) && val(s, c.id) == null);
+const CHEV = `<svg class="chev" viewBox="0 0 8 13" aria-hidden="true"><path d="M1.5 1.5 6.5 6.5 1.5 11.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function valLabel(c, v){
+  if (c.type === "yesno") return v >= 3 ? "Ya" : "Tidak";
+  if (c.type === "effort") return ({5:"Sangat ringan",4:"Ringan",3:"Sedang",2:"Berat",1:"Sangat berat"})[v] || v + "/5";
+  if (c.type === "biaya") return ({5:"Sangat murah",4:"Murah",3:"Sedang",2:"Mahal",1:"Sangat mahal"})[v] || v + "/5";
+  return v + "/5";
+}
+function chipFor(c, v){
+  if (c.type === "note") return `<span class="chip n">Catatan</span>`;
+  if (v == null) return `<span class="chip n">Belum dinilai</span>`;
+  return `<span class="chip ${v >= 4 ? "g" : v >= 3 ? "m" : "b"}">${valLabel(c, v)}</span>`;
+}
+function segHTML(items, current, attrs, label, cls){
+  return `<div class="seg ${cls || ""}" role="group" aria-label="${esc(label)}">${items.map(([v, l]) => `<button type="button" ${attrs} data-v="${v}" aria-pressed="${String(v) === String(current)}">${l}</button>`).join("")}</div>`;
+}
+
+/* ---------- biaya ---------- */
+const rp = n => "Rp" + Math.round(n || 0).toLocaleString("id-ID");
+const toNum = v => +(String(v ?? "").replace(/[^\d]/g, "")) || 0;
+const PER = {bulan:["per bulan",12], semester:["per semester",2], tahun:["per tahun",1]};
+const COSTKEYS = {pangkal:["🏛️","#5E5CE6"], spp:["📅","#0A84FF"], keg:["🎨","#FF9F0A"], tahunan:["🗓️","#30B07A"], antar:["🚐","#64D2FF"], lain:["👕","#FF6B9A"]};
+const SCOLORS = ["#0A84FF","#FF5C8A","#2FB57A","#AF52DE","#FF9F0A","#00A3BF"];
+const ini = s => { const t = String(s.name || "?").trim().split(/[\s\-]+/).filter(Boolean); return ((t[0] || "?")[0] + (t[1] ? t[1][0] : "")).toUpperCase(); };
+const sColor = s => SCOLORS[Math.max(0, state.schools.findIndex(x => x.id === s.id)) % SCOLORS.length];
+function costOf(s){
+  const c = s.cost || {}, y = 2;
+  const kp = PER[c.kegPer] ? c.kegPer : "semester";
+  const items = [
+    ["Uang pangkal / tuition fee", toNum(c.pangkal), "Sekali bayar", "pangkal"],
+    ["SPP", toNum(c.spp) * 12 * y, `${rp(toNum(c.spp))} × ${12 * y} bulan`, "spp"],
+    ["Uang kegiatan", toNum(c.keg) * PER[kp][1] * y, `${rp(toNum(c.keg))} ${PER[kp][0]} × ${PER[kp][1] * y}`, "keg"],
+    ["Biaya tahunan", toNum(c.tahunan) * y, `${rp(toNum(c.tahunan))} × ${y} tahun`, "tahunan"],
+    ["Antar-jemput", toNum(c.antar) * 12 * y, `${rp(toNum(c.antar))} × ${12 * y} bulan`, "antar"],
+    ["Biaya lain", toNum(c.lain), c.lainKet || "Sekali bayar", "lain"]
+  ].filter(i => i[1] > 0);
+  return {items, total: items.reduce((a, i) => a + i[1], 0), filled: toNum(c.pangkal) + toNum(c.spp) + toNum(c.tahunan) > 0};
+}
+
+/* ---------- status ---------- */
+function setStatus(s, text){
+  const el = $("#status"); el.dataset.s = s;
+  $("#statusText").textContent = text || ({idle:"Tersimpan", saved:"Tersimpan", saving:"Menyimpan…", error:"Gagal menyimpan, coba ubah lagi", local:"Tidak tersimpan"}[s]);
+}
+
+/* ---------- compute ---------- */
+function compute(){
+  const sc = scorable(), list = state.schools;
+  const common = list.length ? sc.filter(c => list.every(s => val(s, c.id) != null)) : [];
+  const results = list.map(s => {
+    let num = 0, den = 0;
+    common.forEach(c => { num += c.weight * val(s, c.id); den += c.weight * 5; });
+    const rated = sc.filter(c => val(s, c.id) != null);
+    const strong = rated.slice().sort((a,b) => (val(s,b.id) - val(s,a.id)) || (b.weight - a.weight)).filter(c => val(s,c.id) >= 4).slice(0,3);
+    const weak = rated.slice().sort((a,b) => (val(s,a.id) - val(s,b.id)) || (b.weight - a.weight)).filter(c => val(s,c.id) <= 3).slice(0,3);
+    const todo = state.criteria.filter(c => incomplete(s, c));
+    return {s, pct: den ? Math.round(num / den * 100) : null, strong, weak, todo};
+  });
+  results.sort((a,b) => (b.pct ?? -1) - (a.pct ?? -1));
+  return {results, common, excluded: sc.filter(c => !common.includes(c))};
+}
+
+/* ---------- render ---------- */
+function render(){
+  const y = window.scrollY;
+  const fe = document.activeElement, fk = fe && fe.dataset ? fe.dataset.fk : null;
+  const sel = fk && "selectionStart" in fe ? [fe.selectionStart, fe.selectionEnd] : null;
+  const gapsAll = state.schools.reduce((n, s) => n + state.criteria.filter(c => incomplete(s, c)).length, 0);
+  const tabs = [["bandingkan","🏆","Ringkasan",""],["sekolah","🏫","Data sekolah",gapsAll ? `<span class="badge" aria-label="${gapsAll} data belum lengkap">${gapsAll}</span>` : ""],["kriteria","⚖️","Kriteria",""]];
+  const tabsHTML = tabs.map(([v,i,l,b]) => `<button type="button" data-act="view" data-v="${v}" aria-current="${state.view === v ? "page" : "false"}"><span aria-hidden="true">${i}</span>${l}${b}</button>`).join("");
+  let tabsEl = $("#viewseg .tabs"), first = false;
+  if (!tabsEl) { $("#viewseg").innerHTML = `<div class="tabs"><span class="tabind noanim" aria-hidden="true"></span><div style="display:contents" id="tabbtns"></div></div>`; tabsEl = $("#viewseg .tabs"); first = true; }
+  if ($("#tabbtns").innerHTML !== tabsHTML) $("#tabbtns").innerHTML = tabsHTML;
+  requestAnimationFrame(moveTabInd);
+
+  $("#tabbar").innerHTML = tabs.map(([v,i,l,b]) => `<button type="button" data-act="view" data-v="${v}" aria-current="${state.view === v ? "page" : "false"}"><span class="ti" aria-hidden="true">${i}</span>${l === "Data sekolah" ? "Sekolah" : l}${b}</button>`).join("");
+  $("#subbar").innerHTML = state.view === "sekolah" && !state.loading ? subbarSchool() : "";
+  const app = $("#app");
+  if (state.loading) { app.innerHTML = `<p class="loading">Memuat data…</p>`; return; }
+  const banner = state.note ? `<div class="banner">${esc(state.note)}</div>` : "";
+  app.innerHTML = banner + (state.view === "sekolah" ? viewSchool() : state.view === "kriteria" ? viewCriteria() : viewCompare());
+  if ($("#dlgCmp") && $("#dlgCmp").open && state.cmpBody) $("#dlgCmpBody").innerHTML = state.cmpBody;
+  if (state.view === "bandingkan") fitPreview();
+  if (state.lastView !== state.view) { app.classList.remove("enter"); void app.offsetWidth; app.classList.add("enter"); state.lastView = state.view; }
+  if (state.pop) { const el = document.querySelector(state.pop); if (el) el.classList.add("pop"); state.pop = null; }
+  if (fk) { const el = document.querySelector(`[data-fk="${CSS.escape(fk)}"]`); if (el) { el.focus({preventScroll:true}); if (sel) try { el.setSelectionRange(sel[0], sel[1]); } catch(e){} } }
+  if (state.focusCrit) {
+    const el = document.getElementById("c-" + state.focusCrit); state.focusCrit = null;
+    if (el) { el.scrollIntoView({block:"center"}); const t = el.querySelector("textarea, input"); if (t) t.focus({preventScroll:true}); return; }
+  }
+  window.scrollTo(0, y);
+}
+function moveTabInd(){ const ind = $(".tabind"), act = $('#tabbtns [aria-current="page"]'); if (!ind || !act || !act.offsetWidth) return;
+  const first = !ind.dataset.ready;
+  if (first) ind.classList.add("noanim");
+  ind.style.width = act.offsetWidth + "px"; ind.style.transform = `translateX(${act.offsetLeft}px)`;
+  if (first) { void ind.offsetWidth; ind.dataset.ready = "1"; requestAnimationFrame(() => ind.classList.remove("noanim")); } }
+window.addEventListener("resize", () => requestAnimationFrame(moveTabInd));
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveTabInd());
+/* drag-to-slide for mouse on horizontal card rows */
+(() => {
+  let el = null, x0 = 0, s0 = 0, moved = false;
+  document.addEventListener("pointerdown", e => {
+    const r = e.target.closest(".rcards"); if (!r || e.pointerType !== "mouse" || e.button !== 0) return;
+    el = r; x0 = e.clientX; s0 = r.scrollLeft; moved = false;
+  });
+  document.addEventListener("pointermove", e => {
+    if (!el) return;
+    const dx = e.clientX - x0;
+    if (!moved && Math.abs(dx) > 5) { moved = true; el.classList.add("dragging"); }
+    if (moved) el.scrollLeft = s0 - dx;
+  });
+  const end = () => { if (!el) return; const r = el; el = null; if (moved) r.classList.remove("dragging"); };
+  document.addEventListener("pointerup", end); document.addEventListener("pointercancel", end);
+  document.addEventListener("click", e => { if (moved && e.target.closest(".rcards")) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+})();
+function fitPreview(){
+  const tile = document.querySelector(".btile"), prev = tile && tile.querySelector(".mprev"), cta = tile && tile.querySelector(".mcta");
+  if (!tile || !prev) return;
+  const rows = [...prev.querySelectorAll(".mrow")]; rows.forEach(r => r.hidden = false);
+  const sib = tile.previousElementSibling;
+  const stacked = !sib || Math.abs(sib.getBoundingClientRect().top - tile.getBoundingClientRect().top) > 4;
+  let shown = rows.length;
+  if (stacked) { shown = Math.min(rows.length, 5); rows.forEach((r, i) => r.hidden = i >= shown); }
+  else {
+    [tile, sib].forEach(e => { e.style.alignSelf = "start"; e.style.height = "auto"; });
+    const target = sib.offsetHeight;
+    while (shown > 1 && tile.offsetHeight > target) { shown--; rows[shown].hidden = true; }
+    [tile, sib].forEach(e => { e.style.alignSelf = ""; e.style.height = ""; });
+  }
+  const total = +cta.dataset.total, rest = rows.length - shown;
+  cta.textContent = rest > 0 ? `Lihat ${rest} kriteria lainnya` : `Lihat perbandingan lengkap`;
+}
+let fitT = null; window.addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fitPreview, 120); });
+function setNavH(){ const hd = document.querySelector("header.nav"); if (hd) document.documentElement.style.setProperty("--navh", hd.offsetHeight + "px"); }
+window.addEventListener("resize", setNavH);
+if (window.ResizeObserver) new ResizeObserver(setNavH).observe(document.querySelector("header.nav")); else setNavH();
+
+function emptyState(){
+  return `<div class="emptystate"><div style="font-size:48px" aria-hidden="true">🎒</div><h2 class="large">Belum ada sekolah</h2><p>Tambahkan sekolah pertama yang Ody kunjungi. Semua sekolah dinilai dengan kriteria yang sama.</p><button class="btn filled" data-act="add-school">Tambah sekolah</button></div>`;
+}
+
+function raceChart(results, recOf){
+  const REC = {best:"var(--rec-best)", mid:"var(--rec-mid)", low:"var(--rec-low)", worst:"var(--rec-worst)"};
+  const colOf = (r, i) => { const rec = recOf ? recOf(i, r.pct) : null; return rec ? REC[rec[2]] : "var(--tint)"; };
+  const top = results.length > 1 && results[0].pct != null && results[0].pct > results[results.length-1].pct ? results[0].s.id : null;
+  return `<div class="chartcard"><div class="race" role="list">${results.map((r, i) => `<div class="lane" role="listitem" aria-label="${esc(r.s.name)}, skor ${r.pct ?? "belum ada"} dari 100">
+    <span class="lanename">${esc(r.s.name)}</span>
+    <div class="track" aria-hidden="true"><span class="trail" style="--p:${r.pct ?? 0};--c:${colOf(r, i)}"></span><span class="runner" style="--p:${r.pct ?? 0};--c:${colOf(r, i)}"><span class="car">🚗</span>${r.s.id === top ? `<span class="crown">👑</span>` : ""}</span></div>
+    <span class="lanescore">${r.pct ?? "–"}</span></div>`).join("")}</div></div>`;
+}
+function costChart(done, pend, min, cheapest){
+  const pendH = (pend || []).map(r => `<button type="button" class="cpend" data-act="goto-cost" data-id="${r.s.id}"><span class="sdot" style="--c:${sColor(r.s)}" aria-hidden="true"></span>${esc(r.s.name)}<span>Rincian biaya belum diisi</span>${CHEV}</button>`).join("");
+  if (!done.length) return pendH;
+  const max = Math.max(...done.map(r => r.total));
+  const used = new Set(); done.forEach(r => r.items.forEach(it => used.add(it[3])));
+  return `<div class="stack">${done.map(r => { const k = "cost:" + r.s.id, open = state.open.has(k);
+    return `<div class="stackrow"><button type="button" class="ctoggle" data-act="toggle" data-k="${k}" aria-expanded="${open}">
+      <span class="top"><b>${esc(r.s.name)}</b>${cheapest && r.total === min ? `<span class="tag best">💚 Paling hemat</span>` : ""}<span class="camt">${rp(r.total)}${r.total > min ? `<small>+${rp(r.total - min)}</small>` : ""}</span>${CHEV}</span>
+      <span class="bars" style="width:${Math.max(30, r.total / max * 100)}%" role="img" aria-label="${esc(r.s.name)}: ${r.items.map(it => `${it[0]} ${rp(it[1])}`).join(", ")}">
+        ${r.items.map((it, i) => `<span class="seg2" title="${esc(it[0])}: ${rp(it[1])}" style="flex:${it[1]};background:${COSTKEYS[it[3]][1]};animation-delay:${i * 80}ms"></span>`).join("")}
+      </span></button>
+      ${open ? `<div class="cdetail">${r.items.map(it => `<div class="costline"><span>${COSTKEYS[it[3]][0]} ${esc(it[0])}</span><span>${rp(it[1])}</span><small>${esc(it[2])}</small></div>`).join("")}<button class="btn small outline" data-act="goto-cost" data-id="${r.s.id}">Ubah rincian</button></div>` : ""}</div>`; }).join("")}</div>
+    <div class="legend">${Object.entries(COSTKEYS).filter(([k]) => used.has(k)).map(([k, v]) => `<span><i style="background:${v[1]}"></i>${({pangkal:"Uang pangkal",spp:"SPP",keg:"Kegiatan",tahunan:"Tahunan",antar:"Antar-jemput",lain:"Lainnya"})[k]}</span>`).join("")}</div>${pendH}`;
+}
+function h2hChart(cols){
+  const crit = state.criteria.filter(c => c.type !== "note");
+  const rows = crit.map(c => {
+    const groups = {};
+    cols.forEach(s => { const v = val(s, c.id); if (v != null) (groups[v] = groups[v] || []).push(s); });
+    const dots = Object.entries(groups).map(([v, arr]) => arr.map((s, k) => {
+      const off = (k - (arr.length - 1) / 2) * 18;
+      return `<span class="dot" style="--c:${sColor(s)};left:calc(${(v - 1) / 4 * 100}% + ${off}px)" title="${esc(s.name)}: ${valLabel(c, +v)}">${esc(ini(s))}</span>`;
+    }).join("")).join("");
+    return `<div class="h2hrow"><span class="h2hlabel">${iconTile(c)}${esc(c.label)}</span>
+      <div class="scale5" role="img" aria-label="${esc(c.label)}: ${cols.map(s => `${esc(s.name)} ${val(s, c.id) != null ? valLabel(c, val(s, c.id)) : "belum dinilai"}`).join(", ")}">${[0,25,50,75,100].map(p => `<span class="tick" style="left:${p}%"></span>`).join("")}${dots}</div></div>`;
+  }).join("");
+  return `<div class="chartcard" style="margin-top:10px">
+    <div class="legend" style="margin:0 0 12px">${cols.map(s => `<span><span class="sdot" style="--c:${sColor(s)}"></span>${esc(s.name)}</span>`).join("")}</div>
+    <div class="scalelab"><span></span><div><span>😕 Kurang</span><span>Sangat baik 🤩</span></div></div>
+    <div class="h2h">${rows}</div></div>`;
+}
+
+const ICONS = {jarak:"📍", jam:"⏰", antar:"🚐", effort:"💪", kurikulum:"📘", inggris:"🗣️", agama:"🕌", metode:"🧩", ekskul:"🥁", rasio:"👩‍🏫", karakter:"🌱", laporan:"📝", fasilitas:"🛝", makan:"🍱", biaya:"💰", ppdb:"📋"};
+const GROUPS = {"Logistik":["🚗","blue"], "Pembelajaran":["📚","purple"], "Perhatian ke anak":["🤝","green"], "Lingkungan":["🌳","teal"], "Biaya & pendaftaran":["💰","orange"], "Tambahan":["✨","gray"]};
+const gInfo = g => GROUPS[g] || ["📌","gray"];
+const iconTile = c => `<span class="icon ic-${gInfo(c.group)[1]}" aria-hidden="true">${c.icon || ICONS[c.id] || "📌"}</span>`;
+const groupHead = (g, right) => `<h2 class="ghead"><b><span class="ge" aria-hidden="true">${gInfo(g)[0]}</span>${esc(g || "Lainnya")}</b>${right || ""}</h2>`;
+
+function viewCompare(){
+  if (!state.schools.length) return emptyState();
+  const {results, common, excluded} = compute();
+  const n = results.length, tie = n > 1 && results[0].pct === results[n-1].pct;
+  const top = n > 1 && !tie && results[0].pct != null ? results[0] : null;
+
+  // cost
+  const y = +state.years || 1;
+  const crow = state.schools.map(s => ({s, ...costOf(s)}));
+  const done = crow.filter(r => r.filled).sort((a,b) => a.total - b.total);
+  const pend = crow.filter(r => !r.filled);
+  const min = done.length ? done[0].total : 0, max = done.length ? done[done.length-1].total : 0;
+  const cheapest = done.length > 1 && max > min ? done[0] : null;
+  const antarUnknown = state.schools.filter(s => val(s, "antar") >= 3 && !toNum((s.cost || {}).antar));
+  const antarNote = antarUnknown.length ? ` Biaya antar-jemput ${antarUnknown.map(s => esc(s.name)).join(" dan ")} belum diketahui, jadi belum termasuk.` : "";
+
+  // gaps
+  const gaps = [];
+  state.schools.forEach(s => state.criteria.forEach(c => { if (!raw(s, c.id).trim()) gaps.push({s, c}); }));
+
+  // recommendation level
+  const recOf = (i, p) => {
+    if (n < 2 || tie || p == null) return null;
+    if (i === 0) return ["👍", "Paling direkomendasikan", "best"];
+    if (p >= 70) return ["🙂", "Kurang direkomendasikan", "mid"];
+    if (p >= 55) return ["🤔", "Belum direkomendasikan", "low"];
+    return ["✋", "Tidak direkomendasikan", "worst"];
+  };
+  const totalCells = state.schools.length * state.criteria.length;
+  const doneCells = state.schools.reduce((a, s) => a + state.criteria.filter(c => !incomplete(s, c)).length, 0);
+  const pctDone = totalCells ? Math.round(doneCells / totalCells * 100) : 0;
+
+  // hero
+  const diff = top ? top.pct - results[1].pct : 0;
+  const heroBody = top
+    ? `<p class="herolabel">Paling direkomendasikan saat ini</p><p class="heroname">${esc(top.s.name)}</p><p class="herosub">Skor ${top.pct} dari 100, unggul ${diff} poin dari ${esc(results[1].s.name)}${diff <= 3 ? ". Selisihnya tipis, keduanya masih layak ditimbang." : "."}</p>`
+    : `<p class="herolabel">Belum ada pemenang</p><p class="heroname">${n < 2 ? "Tambah sekolah lagi" : "Skornya masih sama"}</p><p class="herosub">${n < 2 ? "Butuh minimal dua sekolah untuk dibandingkan." : "Nilai lebih banyak kriteria supaya terlihat bedanya."}</p>`;
+  const hero = `<div class="hero">
+    <div class="herotop"><span class="heroemoji" aria-hidden="true">${top ? "🏆" : "🔍"}</span><div>${heroBody}</div></div>
+    <div class="stats">
+      <div class="stat"><span class="se" aria-hidden="true">🏫</span><div><b>${n} sekolah</b><span>sedang dibandingkan</span></div></div>
+      <div class="stat"><span class="se" aria-hidden="true">💰</span><div><b>${cheapest ? esc(cheapest.s.name) : "Belum bisa"}</b><span>${cheapest ? "paling murah, hemat " + rp(max - min) : "dibandingkan biayanya"}</span></div></div>
+      <div class="stat"><span class="se" aria-hidden="true">${pctDone === 100 ? "✅" : "📝"}</span><div><b>${pctDone}% lengkap</b><span>${gaps.length ? gaps.length + " data belum ada" : "semua data terisi"}</span></div></div>
+    </div></div>`;
+
+  // completeness panel
+  const gapOpen = state.open.has("sec:gaps") && gaps.length;
+  const progRows = results.map(r => { const s = r.s, d = state.criteria.length - r.todo.length, t = state.criteria.length;
+    return `<div class="row prow"><span class="pname"><span class="sdot" style="--c:${sColor(s)}" aria-hidden="true"></span>${esc(s.name)}</span>
+      ${r.todo.length ? `<button class="btn small tinted" data-act="fill" data-id="${s.id}">✏️ Lengkapi</button>` : `<span class="chip g">Lengkap</span>`}
+      <span class="pmeta">${d} dari ${t} kriteria lengkap</span><div class="prog" aria-hidden="true"><span style="width:${Math.round(d / t * 100)}%"></span></div></div>`; }).join("");
+  const gapList = gapOpen ? gaps.map(g => `<div class="row"><button class="rowbtn" data-act="goto" data-id="${g.s.id}" data-c="${g.c.id}">${iconTile(g.c)}<span class="rowmain"><span class="rowtitle" style="font-size:16px">${esc(g.c.label)}</span><span class="rowsub">${esc(g.s.name)}: ${esc(g.c.hint || "")}</span></span>${CHEV}</button></div>`).join("") : "";
+  const gapSec = `<section><h2 class="ghead"><b><span class="ge" aria-hidden="true">📝</span>Kelengkapan data</b>${gaps.length ? `<button class="btn small" data-act="toggle" data-k="sec:gaps" aria-expanded="${!!gapOpen}">${gapOpen ? "Sembunyikan" : `Lihat ${gaps.length} pertanyaan`}</button>` : ""}</h2>
+    <div class="group">${progRows}${gapList}</div><p class="gfoot">Data kosong sebaiknya ditanyakan ke sekolah supaya perbandingannya adil.</p></section>`;
+
+  // ranking cards (compact)
+  const cards = results.map((r, i) => {
+    const rec = recOf(i, r.pct);
+    const tag = rec ? `<span class="tag ${rec[2]}" title="${esc(rec[1])}">${rec[0]} ${rec[1]}</span>` : "";
+    const st = r.strong.slice(0, 2).map(c => esc(c.label)).join(", "), wk = r.weak.slice(0, 2).map(c => esc(c.label)).join(", ");
+    return `<button type="button" class="rcard ${i === 0 && rec ? "top" : ""}" data-act="open-school" data-id="${r.s.id}" aria-label="Buka data ${esc(r.s.name)}">
+      <span class="rtop"><span class="sdot" style="--c:${sColor(r.s)}" aria-hidden="true"></span><b>${esc(r.s.name)}</b>${CHEV}</span>
+      ${tag ? `<span>${tag}</span>` : ""}
+      <span class="rline"><span aria-hidden="true">💪</span>${st || "Belum ada yang menonjol"}</span>
+      <span class="rline"><span aria-hidden="true">⚠️</span>${wk || "Tidak ada catatan"}</span>
+    </button>`;
+  }).join("");
+  const foot = excluded.length ? `Belum ikut dihitung karena datanya belum lengkap: ${excluded.map(c => esc(c.label)).join(", ")}.` : "";
+
+  // cost rows
+  const costRows = done.map(r => {
+    const k = "cost:" + r.s.id, open = state.open.has(k);
+    const tag = cheapest ? (r.total === min ? `<span class="tag best">Paling murah</span>` : r.total === max ? `<span class="tag worst">Paling mahal</span>` : "") : "";
+    const sub = r.total > min ? `${rp(r.total - min)} lebih mahal` : "";
+    return `<div class="row"><button class="rowbtn" data-act="toggle" data-k="${esc(k)}" aria-expanded="${open}">
+        <span class="rowmain"><span class="rowtitle">${esc(r.s.name)} ${tag}</span>${sub ? `<span class="rowsub">${sub}</span>` : ""}</span>
+        <span class="money">${rp(r.total)}</span>${CHEV}</button>
+      ${open ? `<div class="panel"><div>${r.items.map(it => `<div class="costline"><span>${esc(it[0])}</span><span>${rp(it[1])}</span><small>${esc(it[2])}</small></div>`).join("")}</div>
+        <div><button class="btn small" data-act="goto-cost" data-id="${r.s.id}">Ubah rincian</button></div></div>` : ""}</div>`;
+  }).join("") + pend.map(r => `<div class="row"><button class="rowbtn" data-act="goto-cost" data-id="${r.s.id}"><span class="rowmain"><span class="rowtitle">${esc(r.s.name)}</span><span class="rowsub miss">Rincian biaya belum diisi</span></span>${CHEV}</button></div>`).join("");
+
+  // matrix (collapsible)
+  const mOpen = true;
+  let matrix = "";
+  if (mOpen) {
+    const cols = results.map(r => r.s);
+    let lastGroup = null;
+    const body = state.criteria.map(c => {
+      let g = "";
+      if (c.group !== lastGroup) { lastGroup = c.group; g = `<tr class="grp"><th colspan="${cols.length+1}" scope="colgroup">${gInfo(c.group)[0]} ${esc(c.group || "Lainnya")}</th></tr>`; }
+      return g + `<tr><th scope="row">${esc(c.label)}</th>` + cols.map(s => {
+        const r = raw(s, c.id);
+        return `<td data-act="goto" data-id="${s.id}" data-c="${c.id}" tabindex="0" aria-label="${esc(s.name)}, ${esc(c.label)}. Buka untuk mengubah">${chipFor(c, val(s, c.id))}${r.trim() ? `<div class="cellraw">${esc(r)}</div>` : `<div class="cellraw miss">Belum ada data</div>`}</td>`;
+      }).join("") + `</tr>`;
+    }).join("");
+    matrix = `<div class="scroll" style="margin-top:10px"><table class="matrix"><thead><tr><th scope="col">Kriteria</th>${cols.map(s => `<th scope="col">${esc(s.name)}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div><p class="gfoot">Ketuk sel untuk mengubah data atau nilainya.</p>`;
+  }
+
+  const recLegend = n > 1 ? `<details class="info"><summary>Arti label</summary><div class="recnote"><span class="tag best">👍 Paling direkomendasikan</span><span>skor tertinggi</span><span class="tag mid">🙂 Kurang</span><span>70 ke atas</span><span class="tag low">🤔 Belum</span><span>55–69</span><span class="tag worst">✋ Tidak</span><span>di bawah 55</span></div><p class="hint" style="font-size:13px;margin-top:8px">Skor hanya dihitung dari kriteria yang sudah dinilai di semua sekolah.</p></details>` : "";
+  const ARROW = `<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const bhead = (icon, title, right) => `<div class="bhead"><h2><span class="bicon" aria-hidden="true">${icon}</span>${title}</h2>${right || ""}</div>`;
+  const kpi1 = top
+    ? `<div class="kpi accent"><div class="kpitop"><span class="kicon" aria-hidden="true">🏆</span><button class="karrow" data-act="open-school" data-id="${top.s.id}" aria-label="Buka data ${esc(top.s.name)}">${ARROW}</button></div>
+        <div><p class="kval">${esc(top.s.name)}</p><p class="klabel">Paling direkomendasikan, skor ${top.pct}${diff === 0 ? `, sama dengan ${esc(results[1].s.name)}` : diff <= 3 ? `, selisih tipis ${diff} poin` : `, unggul ${diff} poin`}</p></div></div>`
+    : `<div class="kpi accent"><div class="kpitop"><span class="kicon" aria-hidden="true">🔍</span></div><div><p class="kval">${n < 2 ? "Tambah sekolah" : "Skor masih sama"}</p><p class="klabel">${n < 2 ? "Butuh minimal dua sekolah" : "Nilai lebih banyak kriteria"}</p></div></div>`;
+  const kpi2 = `<div class="kpi kcost"><div class="kpitop"><span class="kicon" aria-hidden="true">💚</span>${cheapest ? `<span class="kdelta g">hemat ${rp(max - min)}</span>` : ""}</div>
+      <div><p class="kval">${cheapest ? rp(min) : "–"}</p><p class="klabel">${cheapest ? `Paling hemat: ${esc(cheapest.s.name)}` : "Biaya belum bisa dibandingkan"}</p></div></div>`;
+  const kpi3 = `<div class="kpi"><div class="kpitop"><span class="kicon" aria-hidden="true">${pctDone === 100 ? "✅" : "📝"}</span>${gaps.length ? `<button class="karrow" data-act="next-gap-any" aria-label="Lengkapi data kosong">${ARROW}</button>` : ""}</div>
+      <div><p class="kval">${pctDone}%${gaps.length ? ` <span class="kdelta o">${gaps.length} kosong</span>` : ""}</p><p class="klabel">Kelengkapan data</p></div></div>`;
+  const kpi4 = `<div class="kpi"><div class="kpitop"><span class="kicon" aria-hidden="true">🏫</span><button class="karrow" data-act="add-school" aria-label="Tambah sekolah">＋</button></div>
+      <div><p class="kval">${n} <span class="kavatars">${state.schools.map(s => `<span style="--c:${sColor(s)}">${esc(ini(s))}</span>`).join("")}</span></p><p class="klabel">Sekolah dibandingkan</p></div></div>`;
+  state.cmpBody = `<div style="margin-bottom:12px">${segHTML([["grafik","📈 Grafik"],["tabel","📋 Tabel"]], state.cmpMode, 'data-act="cmpmode"', "Tampilan")}</div>` + (state.cmpMode === "grafik" ? h2hChart(results.map(r => r.s)) : matrix);
+  const spread = state.criteria.filter(c => c.type !== "note").map(c => { const vs = state.schools.map(s => val(s, c.id)).filter(v => v != null); return {c, d: vs.length > 1 ? Math.max(...vs) - Math.min(...vs) : -1}; }).filter(x => x.d >= 0).sort((x, y) => y.d - x.d);
+  const preview = spread.map(({c}) => { const groups = {}; state.schools.forEach(s => { const v = val(s, c.id); if (v != null) (groups[v] = groups[v] || []).push(s); });
+    return `<span class="mrow"><span class="mlabel">${esc(c.label)}</span><span class="mscale">${Object.entries(groups).map(([v, arr]) => arr.map((s, k) => `<span class="mdot" title="${esc(s.name)}" style="--c:${sColor(s)};left:calc(${(v - 1) / 4 * 100}% + ${(k - (arr.length - 1) / 2) * 21}px)">${esc(ini(s))}</span>`).join("")).join("")}</span></span>`; }).join("");
+  return `<div class="bento">
+    ${kpi1}${kpi2}${kpi3}${kpi4}
+    <section class="bcard b8">${bhead("🏅", "Peringkat", `<span class="bpill">${common.length} kriteria dihitung</span>`)}${raceChart(results, recOf)}<div class="rcards">${cards}</div></section>
+    <section class="bcard b4">${bhead("📝", "Kelengkapan data", gaps.length ? `<button class="btn small outline" data-act="toggle" data-k="sec:gaps" aria-expanded="${!!gapOpen}">${gapOpen ? "Tutup" : `${gaps.length} kosong`}</button>` : "")}<div class="blist">${progRows}${gapList}</div><p class="bfoot">Tanyakan data yang kosong ke sekolah.</p></section>
+    <section class="bcard b8">${bhead("💰", "Biaya sampai lulus", `<span class="bpill">2 tahun</span>`)}${costChart(done, pend, min, cheapest)}<p class="bfoot">Tanpa biaya wisuda.${antarNote}</p></section>
+    <button type="button" class="bcard btile b4" data-act="open-cmp" aria-haspopup="dialog" aria-label="Buka adu per kriteria">
+      ${bhead("🥊", "Adu per kriteria", `<span class="karrow" aria-hidden="true">${ARROW}</span>`)}
+      <span class="mlegend">${state.schools.map(s => `<span><span class="ldot" style="--c:${sColor(s)}" aria-hidden="true">${esc(ini(s))}</span>${esc(s.name)}</span>`).join("")}</span>
+      ${preview ? `<span class="mprev"><span class="mcap">Beda paling jauh</span>${preview}</span>` : ""}
+      <span class="mcta" data-total="${state.criteria.filter(c => c.type !== "note").length}">Lihat semua ${state.criteria.filter(c => c.type !== "note").length} kriteria</span>
+    </button>
+  </div>`;
+}
+
+/* ---------- school ---------- */
+function activeSchool(){
+  if (!state.schools.find(s => s.id === state.active)) state.active = state.schools[0] ? state.schools[0].id : null;
+  return state.schools.find(s => s.id === state.active);
+}
+function subbarSchool(){
+  const s = activeSchool(); if (!s) return "";
+  const chips = state.schools.map(x => { const n = state.criteria.filter(c => incomplete(x, c)).length;
+    return `<button type="button" class="schip" data-act="pick" data-v="${x.id}" aria-pressed="${x.id === s.id}"><span class="sdot" style="--c:${sColor(x)}" aria-hidden="true"></span>${esc(x.name)}${n ? `<span class="cnt" aria-label="${n} belum lengkap">${n}</span>` : `<span class="ok" aria-label="lengkap">✓</span>`}</button>`; }).join("");
+  const n = state.criteria.filter(c => incomplete(s, c)).length;
+  return `<div class="chips" role="group" aria-label="Pilih sekolah">${chips}</div>
+    <div class="toolrow"><button type="button" class="toggle" data-act="filter" data-v="${state.filter === "todo" ? "all" : "todo"}" aria-pressed="${state.filter === "todo"}"><span class="sw" aria-hidden="true"></span>Hanya yang belum lengkap</button>
+    ${n ? `<button type="button" class="btn small tinted" data-act="next-gap">✏️ Isi yang kosong (${n})</button>` : `<span class="progress">🎉 Semua kriteria lengkap</span>`}</div>`;
+}
+function ratingFor(s, c){
+  if (c.type === "note") return `<p class="hint">Hanya catatan, tidak dinilai.</p>`;
+  const v = val(s, c.id), a = `data-act="rate" data-id="${s.id}" data-c="${c.id}"`;
+  let items = [[1,"1"],[2,"2"],[3,"3"],[4,"4"],[5,"5"]], help = "1 kurang, 5 sangat baik";
+  if (c.type === "yesno") { items = [[5,"Ya"],[1,"Tidak"]]; help = ""; }
+  if (c.type === "effort") { items = [[5,"Sangat ringan"],[4,"Ringan"],[3,"Sedang"],[2,"Berat"],[1,"Sangat berat"]]; help = "Makin ringan makin baik"; }
+  if (c.type === "biaya") { items = [[5,"Sangat murah"],[4,"Murah"],[3,"Sedang"],[2,"Mahal"],[1,"Sangat mahal"]]; help = "Makin murah makin baik. Bandingkan dengan total biaya di Ringkasan"; }
+  return `${segHTML(items, v ?? "", a, "Penilaian " + c.label, c.type === "biaya" || c.type === "effort" ? "full lg lv5" : "full lg")}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span class="hint" style="font-size:13px">${help}</span>${v != null ? `<button class="btn plain small" ${a} data-v="">Hapus nilai</button>` : ""}</div>`;
+}
+function viewSchool(){
+  const s = activeSchool(); if (!s) return emptyState();
+  const res = compute().results.find(r => r.s.id === s.id);
+  const done = state.criteria.filter(c => !incomplete(s, c)).length, total = state.criteria.length;
+  let lastGroup = null, html = "", groupRows = "";
+  const gid = g => "g-" + String(g || "lainnya").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const flush = () => { if (groupRows) html += `<section id="${gid(lastGroup)}">${groupHead(lastGroup)}<div class="group">${groupRows}</div></section>`; groupRows = ""; };
+  const list = state.criteria.filter(c => state.filter === "all" || incomplete(s, c));
+  list.forEach(c => {
+    if (c.group !== lastGroup) { flush(); lastGroup = c.group; }
+    const r = raw(s, c.id), k = "crit:" + c.id, open = state.open.has(k);
+    const note = (s.eval && s.eval[c.id] && s.eval[c.id].note) || "";
+    groupRows += `<div class="row" id="c-${c.id}">
+      <button class="rowbtn" data-act="toggle" data-k="${k}" aria-expanded="${open}" aria-controls="p-${c.id}">
+        ${iconTile(c)}
+        <span class="rowmain"><span class="rowtitle">${esc(c.label)}</span><span class="rowsub ${r.trim() ? "" : "miss"}">${r.trim() ? esc(r) : "Belum ada data"}</span></span>
+        ${chipFor(c, val(s, c.id))}${CHEV}
+      </button>
+      ${open ? `<div class="panel" id="p-${c.id}">
+        ${c.hint ? `<p class="hint">💡 ${esc(c.hint)}</p>` : ""}
+        <div class="field"><label for="raw-${c.id}">Data mentah</label><textarea id="raw-${c.id}" data-fk="raw:${s.id}:${c.id}" data-field="raw" data-id="${s.id}" data-c="${c.id}" placeholder="Tulis hasil temuan atau jawaban dari sekolah">${esc(r)}</textarea></div>
+        <div class="field"><span class="flabel">Penilaian</span>${ratingFor(s, c)}</div>
+        ${c.type !== "note" ? `<div class="field"><label for="note-${c.id}">Alasan penilaian</label><input type="text" id="note-${c.id}" data-fk="note:${s.id}:${c.id}" data-field="note" data-id="${s.id}" data-c="${c.id}" value="${esc(note)}" placeholder="Opsional"></div>` : ""}
+        <div class="panelfoot"><button type="button" class="btn small" data-act="toggle" data-k="${k}">Tutup</button>${(() => { const i = list.indexOf(c), nx = list[i + 1]; return nx ? `<button type="button" class="btn small tinted" data-act="next-crit" data-c="${c.id}">Lanjut: ${esc(nx.label)}</button>` : ""; })()}</div>
+      </div>` : ""}</div>`;
+    if (c.id === "biaya") { flush(); html += costForm(s); }
+  });
+  flush();
+  if (!list.length) html += `<div class="emptystate"><div style="font-size:44px" aria-hidden="true">🎉</div><h2 class="large">Semua lengkap</h2><p>Semua kriteria ${esc(s.name)} sudah ada data dan nilainya.</p><button class="btn" data-act="filter" data-v="all">Tampilkan semua</button></div>`;
+  if (state.filter === "all" && !state.criteria.some(c => c.id === "biaya")) html += costForm(s);
+  const groups = []; state.criteria.forEach(c => { if (!groups.includes(c.group)) groups.push(c.group); });
+  const nTodo = total - done;
+  const side = `<aside class="side" aria-label="Navigasi data sekolah">
+    <div><h3>Sekolah</h3><div class="slist">${state.schools.map(x => { const t = state.criteria.length, d = state.criteria.filter(c => !incomplete(x, c)).length;
+      return `<button type="button" class="sitem" data-act="pick" data-v="${x.id}" aria-pressed="${x.id === s.id}"><span class="sdot" style="--c:${sColor(x)}" aria-hidden="true"></span><span class="nm">${esc(x.name)}</span>${d < t ? `<span class="schip-c cnt" style="font-size:12px;font-weight:700;color:var(--orange)">${t - d}</span>` : `<span style="color:var(--green);font-weight:700">✓</span>`}<div class="prog" aria-hidden="true"><span style="width:${Math.round(d / t * 100)}%"></span></div></button>`; }).join("")}</div></div>
+    <div class="sidebtns">${nTodo ? `<button type="button" class="btn tinted" data-act="next-gap">✏️ Isi yang kosong (${nTodo})</button>` : ""}
+      <button type="button" class="toggle" data-act="filter" data-v="${state.filter === "todo" ? "all" : "todo"}" aria-pressed="${state.filter === "todo"}"><span class="sw" aria-hidden="true"></span>Hanya yang belum lengkap</button></div>
+    <div><h3>Lompat ke</h3><div class="jump">${groups.map(g => { const cs = state.criteria.filter(c => c.group === g), d = cs.filter(c => !incomplete(s, c)).length;
+      return `<button type="button" data-act="jump" data-g="${gid(g)}"><span aria-hidden="true">${gInfo(g)[0]}</span>${esc(g || "Lainnya")}<span class="jc ${d === cs.length ? "full" : ""}">${d}/${cs.length}</span></button>`; }).join("")}
+      <button type="button" data-act="jump" data-g="c-rincian-biaya"><span aria-hidden="true">🧾</span>Rincian biaya</button>
+      <button type="button" data-act="jump" data-g="g-catatan"><span aria-hidden="true">🗒️</span>Catatan</button></div></div>
+  </aside>`;
+  return `<div class="splitpage">${side}<div>
+    <div class="schoolhero"><span class="heroemoji" aria-hidden="true">🏫</span>
+      <div style="flex:1;min-width:0"><p class="heroname" style="font-size:24px;margin:0">${esc(s.name)}</p>
+      <p class="herosub">${done} dari ${total} kriteria lengkap</p><div class="prog" aria-hidden="true"><span style="width:${Math.round(done/total*100)}%"></span></div></div>
+      <div class="ring" style="--p:${res && res.pct != null ? res.pct : 0}" role="img" aria-label="Skor ${res && res.pct != null ? res.pct : "belum ada"} dari 100"><span>${res && res.pct != null ? res.pct : "–"}</span></div></div>
+    ${html}
+    <section id="g-catatan"><h2 class="ghead"><b><span class="ge" aria-hidden="true">🗒️</span>Catatan</b></h2><div class="group"><div class="panel" style="padding-top:14px">
+      <div class="field"><label for="sname">Nama sekolah</label><input type="text" id="sname" data-fk="name:${s.id}" data-field="name" data-id="${s.id}" value="${esc(s.name)}"></div>
+      <div class="field"><label for="sx">Catatan lain</label><textarea id="sx" data-fk="extra:${s.id}" data-field="extra" data-id="${s.id}" placeholder="Info yang belum masuk kriteria mana pun">${esc(s.extra || "")}</textarea></div>
+      <div class="field"><label for="sk">Kesimpulan</label><textarea id="sk" data-fk="concl:${s.id}" data-field="conclusion" data-id="${s.id}" placeholder="Kesan akhirmu. Tampil di Ringkasan.">${esc(s.conclusion || "")}</textarea></div>
+    </div></div></section>
+    <div class="group"><button class="rowbtn" data-act="del-school" data-id="${s.id}" style="justify-content:center;color:var(--red);font-weight:500">Hapus ${esc(s.name)}</button></div>
+  </div></div>`;
+}
+
+function costForm(s){
+  const c = s.cost || {}, r = costOf(s), kp = PER[c.kegPer] ? c.kegPer : "semester";
+  const fmt = k => toNum(c[k]) ? toNum(c[k]).toLocaleString("id-ID") : "";
+  const f = (k, l) => `<div class="row formrow"><label for="cost-${k}">${l}</label><input type="text" inputmode="numeric" id="cost-${k}" data-fk="cost:${s.id}:${k}" data-cost="${k}" data-id="${s.id}" value="${fmt(k)}" placeholder="Rp0"></div>`;
+  return `<section id="c-rincian-biaya"><h2 class="ghead"><b><span class="ge" aria-hidden="true">🧾</span>Rincian biaya</b></h2><div class="group">
+    ${f("pangkal", "Uang pangkal / tuition fee")}${f("spp", "SPP per bulan")}
+    <div class="row formrow"><label for="cost-keg">Uang kegiatan</label><div class="inline"><input type="text" inputmode="numeric" id="cost-keg" data-fk="cost:${s.id}:keg" data-cost="keg" data-id="${s.id}" value="${fmt("keg")}" placeholder="Rp0"><select data-costper data-id="${s.id}" aria-label="Periode uang kegiatan">${Object.entries(PER).map(([k, v]) => `<option value="${k}" ${k === kp ? "selected" : ""}>${v[0]}</option>`).join("")}</select></div></div>
+    ${f("tahunan", "Biaya per tahun")}${f("antar", "Antar-jemput per bulan")}${f("lain", "Biaya lain sekali bayar")}
+    <div class="row formrow"><label for="cost-lainKet">Keterangan biaya lain</label><input type="text" class="wide" id="cost-lainKet" data-fk="cost:${s.id}:lainKet" data-cost="lainKet" data-id="${s.id}" value="${esc(c.lainKet || "")}" placeholder="Misalnya seragam"></div>
+    <div class="formtotal"><span>Total 2 tahun</span><span id="costTotal">${rp(r.total)}</span></div>
+  </div><p class="gfoot">Isi dalam rupiah. Biaya wisuda tidak perlu dimasukkan.</p></section>`;
+}
+
+/* ---------- criteria ---------- */
+function viewCriteria(){
+  const groups = []; state.criteria.forEach(c => { if (!groups.includes(c.group)) groups.push(c.group); });
+  const wl = {0:"Tidak dihitung",1:"Biasa",2:"Penting",3:"Sangat penting"};
+  const kgid = g => "kg-" + String(g || "lainnya").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const secs = groups.map(g => {
+    const rows = state.criteria.map((c, i) => [c, i]).filter(([c]) => c.group === g).map(([c, i]) => {
+      const k = "kc:" + c.id, open = state.open.has(k), counted = counts(c);
+      return `<div class="row" id="kc-${c.id}">
+        <button class="rowbtn" data-act="toggle" data-k="${k}" aria-expanded="${open}" aria-controls="kp-${c.id}">
+          ${iconTile(c)}
+          <span class="rowmain"><span class="rowtitle">${esc(c.label)}</span><span class="rowsub">${TYPES[c.type].name}</span></span>
+          <span class="chip ${counted ? (+c.weight >= 3 ? "g" : +c.weight >= 2 ? "m" : "n") : "n"}">${counted ? "Bobot " + c.weight : "Tidak dihitung"}</span>${CHEV}
+        </button>
+        ${open ? `<div class="panel" id="kp-${c.id}">
+          <div class="field"><label for="kn-${c.id}">Nama kriteria</label><input type="text" id="kn-${c.id}" data-fk="cl:${c.id}" data-cfield="label" data-i="${i}" value="${esc(c.label)}"></div>
+          <div class="field"><label for="kt-${c.id}">Jenis penilaian</label><select id="kt-${c.id}" data-cfield="type" data-i="${i}" style="width:100%">${Object.entries(TYPES).map(([kk,t]) => `<option value="${kk}" ${c.type===kk?"selected":""}>${t.name}: ${t.desc}</option>`).join("")}</select></div>
+          ${c.type === "note" ? "" : `<div class="field"><span class="flabel">Bobot</span>${segHTML([[0,"0"],[1,"1"],[2,"2"],[3,"3"]], +c.weight, `data-act="weight" data-i="${i}"`, "Bobot " + c.label, "full lg")}<p class="hint" style="font-size:13px;margin-top:6px">${wl[+c.weight] || ""}</p></div>`}
+          <div class="field"><label for="kh-${c.id}">Pertanyaan bantu</label><input type="text" id="kh-${c.id}" data-fk="ch:${c.id}" data-cfield="hint" data-i="${i}" value="${esc(c.hint || "")}" placeholder="Muncul saat data sekolah masih kosong"></div>
+          <div class="panelfoot"><button type="button" class="btn small" data-act="toggle" data-k="${k}">Tutup</button><button type="button" class="btn small plain destructive" data-act="del-crit" data-i="${i}">Hapus kriteria</button></div>
+        </div>` : ""}</div>`;
+    }).join("");
+    return `<section id="${kgid(g)}">${groupHead(g, `<span class="bpill">${state.criteria.filter(c => c.group === g).length} kriteria</span>`)}<div class="group">${rows}</div></section>`;
+  }).join("");
+  const nCount = state.criteria.filter(counts).length, wSum = state.criteria.filter(counts).reduce((a, c) => a + +c.weight, 0);
+  const top = state.criteria.filter(c => counts(c) && +c.weight >= 3);
+  const side = `<aside class="side" aria-label="Navigasi kriteria">
+    <div class="sidecard"><p class="kval" style="font-size:24px">${state.criteria.length}</p><p class="klabel" style="margin-top:2px">kriteria, ${nCount} ikut dihitung</p>
+      ${top.length ? `<p class="hint" style="font-size:13px;margin-top:10px">Paling berpengaruh: ${top.map(c => esc(c.label)).join(", ")}</p>` : ""}</div>
+    <div><h3>Lompat ke</h3><div class="jump">${groups.map(g => { const cs = state.criteria.filter(c => c.group === g), w = cs.filter(counts).reduce((a, c) => a + +c.weight, 0);
+      return `<button type="button" data-act="jump" data-g="${kgid(g)}"><span aria-hidden="true">${gInfo(g)[0]}</span>${esc(g || "Lainnya")}<span class="jc" title="Total bobot">${wSum ? Math.round(w / wSum * 100) : 0}%</span></button>`; }).join("")}</div>
+      <p class="hint" style="font-size:12px;margin:8px 10px 0">Persentase menunjukkan porsi bobot tiap kelompok di skor akhir.</p></div>
+    <div class="sidebtns"><button type="button" class="btn small" data-act="reset-crit">Kembalikan ke bawaan</button></div>
+  </aside>`;
+  return `<div class="splitpage">${side}<div><div class="pagehead"><div><h2 class="large">Kriteria</h2><p class="lede" style="margin:4px 0 0">⚖️ Berlaku untuk semua sekolah. Ketuk kriteria untuk mengubah nama, jenis, atau bobotnya.</p></div>
+      <form id="formCrit"><input type="text" id="newCrit" placeholder="Kriteria baru, misalnya Keamanan" aria-label="Nama kriteria baru"><button class="btn filled" type="submit">Tambah</button></form></div>
+    <div class="err" id="critErr" style="margin:-8px 0 10px"></div>
+    <div class="critlist2">${secs}</div>
+    <p class="gfoot" style="margin-bottom:16px">Bobot 0 berarti tidak dihitung, 3 berarti sangat penting. ${Object.values(TYPES).map(t => `${t.name}: ${t.desc}.`).join(" ")}</p>
+    <button class="btn plain small mreset" data-act="reset-crit">Kembalikan kriteria ke bawaan</button></div></div>`;
+}
+/* ---------- actions ---------- */
+function go(view){ state.view = view; if (location.hash.slice(1) !== view) history.replaceState(null, "", "#" + view); window.scrollTo(0, 0); render(); }
+function getSchool(id){ return state.schools.find(s => s.id === id); }
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-act]"); if (!t) return;
+  const act = t.dataset.act;
+  if (act === "view") go(t.dataset.v);
+  if (act === "help") $("#dlgHelp").showModal();
+  if (act === "close-dlg") t.closest("dialog").close();
+  if (act === "add-school") { $("#newName").value = ""; $("#addErr").textContent = ""; $("#dlgAdd").showModal(); $("#newName").focus(); }
+  if (act === "toggle") { const k = t.dataset.k; state.open.has(k) ? state.open.delete(k) : state.open.add(k); render(); const b = document.querySelector(`[data-act="toggle"][data-k="${CSS.escape(k)}"]`); if (b) b.focus({preventScroll:true}); }
+  if (act === "pick") { state.active = t.dataset.v; state.criteria.forEach(c => state.open.delete("crit:" + c.id)); window.scrollTo(0, 0); render(); }
+  if (act === "filter") { state.filter = t.dataset.v; render(); }
+  if (act === "next-gap" || act === "next-gap-any") {
+    let s = activeSchool();
+    if (act === "next-gap-any") s = state.schools.slice().sort((x, y) => state.criteria.filter(c => incomplete(y, c)).length - state.criteria.filter(c => incomplete(x, c)).length)[0];
+    if (!s) return;
+    const cur = state.criteria.findIndex(c => state.open.has("crit:" + c.id) && s.id === state.active);
+    const todo = state.criteria.filter(c => incomplete(s, c));
+    if (!todo.length) { toast("Semua data sudah lengkap 🎉"); return; }
+    const nx = todo.find(c => state.criteria.indexOf(c) > cur) || todo[0];
+    state.criteria.forEach(c => state.open.delete("crit:" + c.id));
+    state.active = s.id; state.open.add("crit:" + nx.id); state.focusCrit = nx.id;
+    if (state.view !== "sekolah") go("sekolah"); else render();
+  }
+  if (act === "next-crit") {
+    const s = activeSchool(); if (!s) return;
+    const list = state.criteria.filter(c => state.filter === "all" || incomplete(s, c) || c.id === t.dataset.c);
+    const i = list.findIndex(c => c.id === t.dataset.c), nx = list[i + 1];
+    state.open.delete("crit:" + t.dataset.c);
+    if (nx) { state.open.add("crit:" + nx.id); state.focusCrit = nx.id; }
+    render();
+  }
+  if (act === "fill") {
+    const s = getSchool(t.dataset.id); if (!s) return;
+    const nx = state.criteria.find(c => incomplete(s, c)); if (!nx) return;
+    state.criteria.forEach(c => state.open.delete("crit:" + c.id));
+    state.active = s.id; state.filter = "all"; state.open.add("crit:" + nx.id); state.focusCrit = nx.id; go("sekolah");
+  }
+  if (act === "jump") { if (state.filter !== "all") { state.filter = "all"; render(); } const el = document.getElementById(t.dataset.g); if (el) el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"}); }
+  if (act === "open-cmp") { render(); $("#dlgCmpBody").innerHTML = state.cmpBody || ""; $("#dlgCmp").showModal(); }
+  if (act === "cmpmode") { state.cmpMode = t.dataset.v; render(); }
+  if (act === "years") { state.years = +t.dataset.v; saveCriteria(true); render(); }
+  if (act === "weight") { const c = state.criteria[+t.dataset.i]; c.weight = +t.dataset.v; state.pop = `[data-act="weight"][data-i="${t.dataset.i}"][data-v="${t.dataset.v}"]`; saveCriteria(true); render(); }
+  if (act === "open-school") { state.active = t.dataset.id; go("sekolah"); }
+  if (act === "goto") { state.active = t.dataset.id; state.filter = "all"; state.open.add("crit:" + t.dataset.c); state.focusCrit = t.dataset.c; go("sekolah"); }
+  if (act === "goto-cost") { state.active = t.dataset.id; state.filter = "all"; state.focusCrit = "rincian-biaya"; go("sekolah"); }
+  if (act === "rate") {
+    const s = getSchool(t.dataset.id); if (!s) return;
+    s.eval = s.eval || {}; s.eval[t.dataset.c] = s.eval[t.dataset.c] || {};
+    const nv = t.dataset.v === "" ? null : +t.dataset.v;
+    s.eval[t.dataset.c].v = s.eval[t.dataset.c].v === nv ? null : nv;
+    if (s.eval[t.dataset.c].v != null) state.pop = `[data-act="rate"][data-c="${t.dataset.c}"][data-v="${nv}"]`;
+    scheduleSave(s.id, true); render();
+  }
+  if (act === "del-school") {
+    const s = getSchool(t.dataset.id);
+    confirmBox(`Hapus ${s.name}?`, "Data mentah, nilai, dan rincian biayanya ikut terhapus. Kamu bisa membatalkannya beberapa detik setelahnya.", "Hapus", () => removeSchool(s));
+  }
+  if (act === "del-crit") {
+    const idx = +t.dataset.i, c = state.criteria[idx];
+    confirmBox(`Hapus kriteria ${c.label}?`, "Kriteria ini hilang dari perbandingan semua sekolah.", "Hapus", () => {
+      const removed = state.criteria.splice(idx, 1)[0];
+      saveCriteria(true); render();
+      toast(`${removed.label} dihapus`, () => { state.criteria.splice(idx, 0, removed); saveCriteria(true); render(); });
+    });
+  }
+  if (act === "reset-crit") {
+    confirmBox("Kembalikan kriteria ke bawaan?", "Nama, jenis, dan bobot kriteria kembali seperti awal. Data dan nilai sekolah tetap ada.", "Kembalikan", () => {
+      const prev = clone(state.criteria);
+      state.criteria = DEFAULT_CRITERIA.map(c => ({...c})); saveCriteria(true); render();
+      toast("Kriteria dikembalikan", () => { state.criteria = prev; saveCriteria(true); render(); });
+    });
+  }
+});
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("td[data-act]")) { e.preventDefault(); e.target.click(); }
+});
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (["bandingkan","sekolah","kriteria"].includes(h) && h !== state.view) { state.view = h; render(); } });
+
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.field) {
+    const s = getSchool(t.dataset.id); if (!s) return;
+    const f = t.dataset.field;
+    if (f === "raw") { s.raw = s.raw || {}; s.raw[t.dataset.c] = t.value; }
+    else if (f === "note") { s.eval = s.eval || {}; s.eval[t.dataset.c] = s.eval[t.dataset.c] || {v:null}; s.eval[t.dataset.c].note = t.value; }
+    else s[f] = t.value;
+    scheduleSave(s.id);
+  }
+  if (t.dataset.cost) {
+    const s = getSchool(t.dataset.id); if (!s) return;
+    s.cost = s.cost || {};
+    s.cost[t.dataset.cost] = t.dataset.cost === "lainKet" ? t.value : toNum(t.value);
+    const el = $("#costTotal"); if (el) el.textContent = rp(costOf(s).total);
+    scheduleSave(s.id);
+  }
+  if (t.dataset.cfield && t.tagName === "INPUT") { state.criteria[+t.dataset.i][t.dataset.cfield] = t.value; saveCriteria(); }
+});
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.cfield && t.tagName === "SELECT") {
+    const c = state.criteria[+t.dataset.i];
+    c.type = t.value;
+    if (c.type === "note") c.weight = 0; else if (!+c.weight) c.weight = 1;
+    saveCriteria(true); render();
+  }
+  if (t.hasAttribute("data-costper")) { const s = getSchool(t.dataset.id); s.cost = s.cost || {}; s.cost.kegPer = t.value; scheduleSave(s.id, true); render(); }
+  if (t.dataset.cost && t.dataset.cost !== "lainKet") render();
+  if (t.dataset.field === "raw" || t.dataset.field === "name") {
+    const s = getSchool(t.dataset.id);
+    if (t.dataset.field === "name" && !t.value.trim()) { s.name = "Tanpa nama"; scheduleSave(s.id, true); }
+    render();
+  }
+});
+
+document.addEventListener("submit", e => {
+  if (e.target.id === "formAdd") {
+    e.preventDefault();
+    const name = $("#newName").value.trim();
+    if (!name) { $("#addErr").textContent = "Isi nama sekolah dulu."; $("#newName").focus(); return; }
+    if (state.schools.some(s => s.name.toLowerCase() === name.toLowerCase())) { $("#addErr").textContent = "Sekolah dengan nama ini sudah ada."; return; }
+    const id = "s" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+    const order = state.schools.reduce((m, s) => Math.max(m, s.order || 0), 0) + 1;
+    state.schools.push({id, name, order, raw:{}, eval:{}, cost:{}, extra:"", conclusion:""});
+    $("#dlgAdd").close(); state.active = id; state.filter = "all"; scheduleSave(id, true); go("sekolah");
+    toast(`${name} ditambahkan`);
+  }
+  if (e.target.id === "formCrit") {
+    e.preventDefault();
+    const label = $("#newCrit").value.trim();
+    if (!label) { $("#critErr").textContent = "Isi nama kriteria dulu."; return; }
+    if (state.criteria.some(c => c.label.toLowerCase() === label.toLowerCase())) { $("#critErr").textContent = "Kriteria ini sudah ada."; return; }
+    state.criteria.push({id:"k" + Date.now().toString(36), group:"Tambahan", label, type:"score", weight:1, hint:""});
+    saveCriteria(true); render(); toast(`${label} ditambahkan ke semua sekolah`);
+  }
+});
+
+function removeSchool(s){
+  const snapshot = clone(s), idx = state.schools.indexOf(s);
+  state.schools.splice(idx, 1); clearTimeout(saveTimers[s.id]); delete saveTimers[s.id];
+  if (state.active === s.id) state.active = state.schools[0] ? state.schools[0].id : null;
+  if (db) chains[s.id] = (chains[s.id] || Promise.resolve()).then(() => db.doc("schools/" + s.id).delete()).catch(() => setStatus("error"));
+  render();
+  toast(`${snapshot.name} dihapus`, () => { state.schools.splice(idx, 0, snapshot); scheduleSave(snapshot.id, true); render(); });
+}
+function confirmBox(title, body, okLabel, fn){
+  $("#cfTitle").textContent = title; $("#cfBody").textContent = body;
+  const ok = $("#cfOk"); ok.textContent = okLabel;
+  ok.onclick = () => { $("#dlgConfirm").close(); fn(); };
+  $("#dlgConfirm").showModal();
+}
+let toastTimer = null;
+function toast(msg, undo){
+  const host = $("#toastHost"); clearTimeout(toastTimer);
+  host.innerHTML = `<div class="toast" role="status"><span></span>${undo ? `<button class="btn small" type="button">Batalkan</button>` : ""}</div>`;
+  host.querySelector("span").textContent = msg;
+  if (undo) host.querySelector("button").onclick = () => { host.innerHTML = ""; undo(); };
+  toastTimer = setTimeout(() => host.innerHTML = "", undo ? 8000 : 3000);
+}
+
+/* ---------- persistence ---------- */
+function bodyOf(s){ const {id, ...rest} = s; return clone(rest); }
+function scheduleSave(id, now){
+  dirty[id] = true;
+  if (!db) { setStatus("local"); return; }
+  setStatus("saving");
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(() => flush(id), now ? 0 : 700);
+}
+function flush(id){
+  delete saveTimers[id];
+  const s = state.schools.find(x => x.id === id); if (!s) return;
+  const body = bodyOf(s); body.updatedAt = Date.now();
+  chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("schools/" + id).set(body)).then(() => {
+    if (!saveTimers[id]) dirty[id] = false;
+    if (!Object.keys(saveTimers).length) setStatus("saved");
+  }).catch(() => setStatus("error"));
+}
+let critTimer = null, critChain = Promise.resolve();
+function saveCriteria(now){
+  if (!db) { setStatus("local"); return; }
+  setStatus("saving"); clearTimeout(critTimer);
+  critTimer = setTimeout(() => {
+    critTimer = null;
+    const data = {criteria: clone(state.criteria), years: state.years};
+    critChain = critChain.then(() => db.doc("settings/app").set(data)).then(() => setStatus("saved")).catch(() => setStatus("error"));
+  }, now ? 0 : 600);
+}
+
+/* ---------- init ---------- */
+async function init(){
+  const h = location.hash.slice(1);
+  if (["bandingkan","sekolah","kriteria"].includes(h)) state.view = h;
+  render();
+  const timer = setTimeout(() => { if (state.loading) { state.loading = false; state.note = "Data belum bisa dimuat. Periksa koneksi, lalu buka ulang halaman ini."; render(); } }, 10000);
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch(e) { db = null; }
+  if (!db) {
+    clearTimeout(timer); state.loading = false;
+    state.note = "Penyimpanan tidak tersedia di tampilan ini. Kamu tetap bisa mencoba aplikasinya, tapi perubahan tidak akan tersimpan.";
+    setStatus("local"); render(); return;
+  }
+  setStatus("saved");
+  db.doc("settings/app").onSnapshot(snap => {
+    if (critTimer) return;
+    const d = snap.exists ? snap.data() : null;
+    const next = d && Array.isArray(d.criteria) && d.criteria.length ? clone(d.criteria) : DEFAULT_CRITERIA.map(c => ({...c}));
+    const ny = 2;
+    if (JSON.stringify(next) === JSON.stringify(state.criteria) && ny === state.years) return;
+    state.criteria = next; state.years = ny; if (!state.loading) render();
+  }, () => {});
+  db.collection("schools").onSnapshot(snap => {
+    clearTimeout(timer);
+    const wasLoading = state.loading; state.loading = false;
+    if (state.note.startsWith("Data belum")) state.note = "";
+    const incoming = snap.docs.map(d => ({id: d.id, ...clone(d.data())}));
+    const merged = incoming.map(s => dirty[s.id] ? (getSchool(s.id) || s) : s);
+    state.schools.forEach(s => { if (dirty[s.id] && !merged.find(m => m.id === s.id)) merged.push(s); });
+    merged.sort((a,b) => (a.order || 0) - (b.order || 0));
+    const sig = JSON.stringify(merged);
+    state.schools = merged;
+    if (wasLoading || sig !== lastSig) { lastSig = sig; render(); }
+  }, () => { clearTimeout(timer); state.loading = false; state.note = "Data tidak bisa dimuat. Buka ulang halaman ini nanti."; render(); });
+}
+init();
+
+</script>
+</body>
+</html>
