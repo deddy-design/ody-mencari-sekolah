@@ -1348,6 +1348,7 @@ function saveCriteria(now){
 
 
 /* ---------- local storage fallback (outside Claude) ---------- */
+const SEED_VERSION = 2;
 const SEED = {
  "schools/alkautsar": {
   "conclusion": "",
@@ -1380,7 +1381,8 @@ const SEED = {
     "v": 4
    },
    "fasilitas": {
-    "v": 4
+    "v": 3,
+    "note": "Kolam renang paling bagus dari semua TK, tapi ruang kelas dan area bermain kurang nyaman"
    },
    "inggris": {
     "note": "Bilingual dengan guru sendiri, ada English day",
@@ -1428,7 +1430,7 @@ const SEED = {
    "biaya": "Pendaftaran Rp300 ribu. SPP Rp930 ribu per bulan. Uang gedung Rp0. Uang annual Rp0. untuk info saja ada ekstra yang berbayar seperti renang 350rb atau bahasa inggris 400 rb, tapi itu tidak wajib\n\nEkskul tambahan berbayar: renang dan tapak suci Rp350 ribu per semester, bahasa Inggris Rp400 ribu per semester. Catatan awal sempat menyebut Rp7 juta untuk semester 1, DP Rp3 juta, dan kenaikan kelas Rp1 juta; info terbaru menggantikan angka-angka ini.",
    "effort": "Sekolah 6 hari (Senin sampai Sabtu). Bawa bekal makan siang (nasi) dari rumah, snack dari sekolah. Ada antar-jemput sampai rumah.",
    "ekskul": "Ekskul dan kegiatan di jam kelas. Wajib: literasi digital dan renang. Tambahan: tapak suci (11.30–12.30), menari, melukis, bahasa Inggris (1 jam), renang sore (15.00–16.00, seminggu sekali). Semua di sekolah. Pekan seni di akhir semester 1. Semester 2 wisuda dan munaqosah. Pentas seni bersama KB sampai SMA di MCC. Wisuda di hotel hari Minggu.",
-   "fasilitas": "ada beberapa playground outdoor dan kolam renang yang proper",
+   "fasilitas": "Ada beberapa playground outdoor dan kolam renang yang proper. Kolam renangnya paling bagus dibanding TK lain yang sudah dikunjungi. Tapi secara keseluruhan fasilitas, ruang kelas, dan area bermainnya terasa kurang nyaman, belum se-proper TK lainnya.",
    "inggris": "Program bilingual dengan guru sendiri. Ada pembiasaan bahasa Inggris setiap hari (sorry, tolong, dan lainnya). Ada full English day sesuai jadwal. Pembiasaan “Happy Morning”. Juga ada bahasa Jawa dan Arab. Ekskul bahasa Inggris tambahan Rp400 ribu per semester.",
    "jam": "Senin sampai Sabtu 07.00 sampai 11.30. Jumat dan Sabtu pulang 10.00. Ekskul dan kegiatan di jam kelas.",
    "jarak": "Sekitar 9,8 km dari rumah. Waktu tempuh mobil kurang lebih 30 menit",
@@ -1944,7 +1946,7 @@ const SEED = {
  }
 };
 function localDb(){
-  const KEY = "ody-mencari-sekolah:db:v1";
+  const KEY = "ody-mencari-sekolah:db:v" + SEED_VERSION;
   let store = null;
   try { store = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
   if (!store || typeof store !== "object") store = JSON.parse(JSON.stringify(SEED));
