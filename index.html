@@ -1346,6 +1346,630 @@ function saveCriteria(now){
   }, now ? 0 : 600);
 }
 
+
+/* ---------- local storage fallback (outside Claude) ---------- */
+const SEED = {
+ "schools/alkautsar": {
+  "conclusion": "",
+  "cost": {
+   "keg": 0,
+   "lain": 300000,
+   "lainKet": "Pendaftaran",
+   "pangkal": 0,
+   "spp": 930000,
+   "tahunan": 0
+  },
+  "eval": {
+   "agama": {
+    "note": "Tahfidz dan munaqosah, target hafalan mengikuti anak",
+    "v": 4
+   },
+   "antar": {
+    "note": "Armada sendiri sampai rumah, biaya belum diketahui",
+    "v": 5
+   },
+   "biaya": {
+    "v": 4
+   },
+   "effort": {
+    "note": "6 hari, bawa bekal nasi, ada antar-jemput",
+    "v": 3
+   },
+   "ekskul": {
+    "note": "Banyak pilihan, ada pentas dan wisuda",
+    "v": 4
+   },
+   "fasilitas": {
+    "v": 4
+   },
+   "inggris": {
+    "note": "Bilingual dengan guru sendiri, ada English day",
+    "v": 4
+   },
+   "jam": {
+    "note": "6 hari, pulang 11.30",
+    "v": 3
+   },
+   "jarak": {
+    "note": "Jarak mirip Sabilillah 1 dan Global Kids",
+    "v": 3
+   },
+   "karakter": {
+    "note": "Ada pemetaan multiple intelligence, belum ada layanan psikologi",
+    "v": 4
+   },
+   "kurikulum": {
+    "note": "Merdeka, Montessori, bilingual",
+    "v": 4
+   },
+   "laporan": {
+    "note": "Progress report one on one tiap 1–2 bulan",
+    "v": 4
+   },
+   "makan": {
+    "note": "Bekal nasi dari rumah, snack dari sekolah",
+    "v": 3
+   },
+   "metode": {
+    "note": "Montessori, multiple intelligence, outing, kelas inspirasi",
+    "v": 4
+   },
+   "rasio": {
+    "note": "15 anak per guru",
+    "v": 4
+   }
+  },
+  "extra": "Ulang tahun boleh dirayakan setelah jam kepulangan. Kebiasaan menabung Rp2.000–Rp5.000 dan ada tabungan orang tua. Lanjut dari TK ke SD Al Kautsar ada potongan biaya. Ada persiapan masuk SD (preschool) selama 3 bulan di 2 jam terakhir, dan anak yang melanjutkan dibawa berkunjung ke SD. Grup WA orang tua untuk pemberitahuan. Komite orang tua dengan iuran per semester.",
+  "name": "Al Kautsar",
+  "order": 5,
+  "raw": {
+   "agama": "Tahfidz: hafalan Juz 30 (tidak harus), target surat mengikuti kemampuan anak. Doa harian dan hadist. Metode mengaji Ilhami, lalu Qiroati dan Tilawati. Pencapaian tahfidz ada wisuda dan munaqosah. Anak yang sudah Al-Quran tampil untuk hafalan. Bahasa Arab ada pembiasaan.",
+   "antar": "Ada antar-jemput dengan armada sekolah sendiri, sampai rumah, dibayar bulanan. Biaya belum diketahui.",
+   "biaya": "Pendaftaran Rp300 ribu. SPP Rp930 ribu per bulan. Uang gedung Rp0. Uang annual Rp0. untuk info saja ada ekstra yang berbayar seperti renang 350rb atau bahasa inggris 400 rb, tapi itu tidak wajib\n\nEkskul tambahan berbayar: renang dan tapak suci Rp350 ribu per semester, bahasa Inggris Rp400 ribu per semester. Catatan awal sempat menyebut Rp7 juta untuk semester 1, DP Rp3 juta, dan kenaikan kelas Rp1 juta; info terbaru menggantikan angka-angka ini.",
+   "effort": "Sekolah 6 hari (Senin sampai Sabtu). Bawa bekal makan siang (nasi) dari rumah, snack dari sekolah. Ada antar-jemput sampai rumah.",
+   "ekskul": "Ekskul dan kegiatan di jam kelas. Wajib: literasi digital dan renang. Tambahan: tapak suci (11.30–12.30), menari, melukis, bahasa Inggris (1 jam), renang sore (15.00–16.00, seminggu sekali). Semua di sekolah. Pekan seni di akhir semester 1. Semester 2 wisuda dan munaqosah. Pentas seni bersama KB sampai SMA di MCC. Wisuda di hotel hari Minggu.",
+   "fasilitas": "ada beberapa playground outdoor dan kolam renang yang proper",
+   "inggris": "Program bilingual dengan guru sendiri. Ada pembiasaan bahasa Inggris setiap hari (sorry, tolong, dan lainnya). Ada full English day sesuai jadwal. Pembiasaan “Happy Morning”. Juga ada bahasa Jawa dan Arab. Ekskul bahasa Inggris tambahan Rp400 ribu per semester.",
+   "jam": "Senin sampai Sabtu 07.00 sampai 11.30. Jumat dan Sabtu pulang 10.00. Ekskul dan kegiatan di jam kelas.",
+   "jarak": "Sekitar 9,8 km dari rumah. Waktu tempuh mobil kurang lebih 30 menit",
+   "karakter": "Ada pengukuran tipe kecerdasan (multiple intelligence) dari TK A ke TK B untuk meninjau ekskul dan minat anak, serta persiapan masuk SD. Belum tercatat ada layanan psikologi.",
+   "kurikulum": "Kurikulum Merdeka dan Montessori. Calistung dari TK A. Bilingual, literasi digital, multiple intelligence, dan tahfidz.",
+   "laporan": "Progress report setiap 1–2 bulan, dicetak dan dibahas one on one dengan orang tua. Grup WA orang tua untuk pemberitahuan. Komite orang tua.",
+   "makan": "Bawa bekal makan siang (nasi) dari rumah. Istirahat 2 kali, snack disediakan sekolah.",
+   "metode": "Montessori dan Kurikulum Merdeka. Calistung dari TK A. Multiple intelligence. Outing 1 kali per semester sesuai tema (peternakan, pemadam kebakaran, stasiun). Kegiatan di luar kelas seperti lompat tali dan papan titian. Kelas inspirasi: wali murid yang berprofesi diajak berkegiatan, 1 kali per semester.",
+   "ppdb": "Biaya pendaftaran Rp300 ribu. Proses tes masuk belum tercatat.",
+   "rasio": "1 kelas 15–20 anak dengan 2 guru (wali kelas dan pendamping), sekitar 8–10 anak per guru. TK A ada 2 kelas."
+  },
+  "updatedAt": 1794638520928
+ },
+ "schools/alyalu": {
+  "conclusion": "",
+  "cost": {
+   "keg": 2100000,
+   "kegPer": "semester",
+   "lain": 2060000,
+   "lainKet": "Seragam, sekali bayar",
+   "pangkal": 7500000,
+   "spp": 1100000,
+   "tahunan": 0
+  },
+  "eval": {
+   "agama": {
+    "note": "Target lebih ringan",
+    "v": 4
+   },
+   "antar": {
+    "note": "Biaya belum diketahui",
+    "v": 5
+   },
+   "biaya": {
+    "note": "Total 2 tahun hampir sama dengan Sabilillah 1",
+    "v": 2
+   },
+   "effort": {
+    "note": "",
+    "v": 5
+   },
+   "ekskul": {
+    "note": "Wajib renang dan pramuka, ditambah 6 pilihan ekskul",
+    "v": 4
+   },
+   "fasilitas": {
+    "note": "Luas dan ada kolam renang, tapi kurang terawat dan kelas agak gelap",
+    "v": 3
+   },
+   "inggris": {
+    "v": 3
+   },
+   "jam": {
+    "note": "Harus pilih part day",
+    "v": 4
+   },
+   "jarak": {
+    "note": "21 menit sekali jalan",
+    "v": 4
+   },
+   "karakter": {
+    "v": 4
+   },
+   "kurikulum": {
+    "note": "",
+    "v": 4
+   },
+   "laporan": {
+    "note": "Ada pertemuan midterm",
+    "v": 4
+   },
+   "makan": {
+    "note": "",
+    "v": 5
+   },
+   "metode": {
+    "note": "",
+    "v": 3
+   },
+   "rasio": {
+    "note": "Sekitar 6–8 anak per guru",
+    "v": 5
+   }
+  },
+  "extra": "Semua kegiatan dikoordinasi sekolah, termasuk ulang tahun anak (memakai jasa sekolah, EO dan catering, orang tua cukup menyiapkan souvenir). Tidak ada paguyuban atau komite orang tua, jadi tidak ribet.",
+  "name": "Al-Ya’lu",
+  "order": 2,
+  "raw": {
+   "agama": "Target lulus TK: lulus Iqro (jilid belum tercatat), hafal surat pendek dan doa harian. Praktik sholat setiap Jumat.",
+   "antar": "Ada antar-jemput sampai Lawang. Batas maksimal jemput 1 jam. Biaya belum diketahui.",
+   "biaya": "Uang pangkal Rp7,5 juta sekali bayar. Seragam Rp2.060.000 sekali bayar. SPP Rp1,1 juta per bulan. Uang semester Rp2,1 juta setiap 6 bulan. Wisuda ada biaya tambahan (tidak dihitung).",
+   "effort": "Semua kegiatan dikoordinasi sekolah, tidak ada paguyuban atau komite orang tua. Perjalanan 21 menit, ada antar-jemput, catering dari sekolah, ulang tahun diurus sekolah.",
+   "ekskul": "Pilihan ekskul: tartil, mewarnai, menari, menyanyi, angklung, dan menggambar. Ekskul hari Jumat. Wajib renang dan pramuka. Berenang (TK), taekwondo (SD). Wisuda ada penampilan.",
+   "fasilitas": "Playground terbuka di area outdoor dan lebih luas, tapi agak kusam dan lama, terlihat kurang terawat. Ada lapangan bola, masih tanah belum rumput. Ada kolam renang. Kegiatan outdoor gardening. Di kelas pakai TV LCD biasa. Ruang kelas lumayan gelap.",
+   "inggris": "ada pelajaran bahasa inggris, indonesia, dan jawa, arab belum. tidak ada native speaker. ada bulan bahasa yang paling rngga ada 1-2 hari full day pakai bahasa inggris atau jawa atau indonesia",
+   "jam": "Sekolah Senin sampai Jumat. Masuk 07.00. Part day pulang 11.00, full day pulang 15.00, Jumat pulang 13.00. Part day memberi jeda paling longgar untuk les 13.30, full day bentrok.",
+   "jarak": "Sekitar 9 km, kurang lebih 21 menit dari rumah.",
+   "karakter": "Ada pembiasaan karakter dan adab. Ada layanan psikologi atau konseling, untuk aturan kelas yang mana ada anak nakal atau bertindak kasar ke temannya secara berulang kali akan ditegur orang tuanya, tapi jika guru melihat anak sedang bertengkar, tidak sampai mereka bertengkar serius atau terjadi pemukulan sang guru langsung melakukan tindakan preventif",
+   "kurikulum": "Kurikulum nasional, pembelajaran pro calistung. pembiasaan karakter dan adab, pembelajarannya bisa diterapkan langsung, semisal pembelajaran soal tanam menanam, karena di sekolah ada media tanamannya",
+   "laporan": "Laporan tiap bulan. Evaluasi midterm (3 bulan) bersama orang tua. Evaluasi per semester.",
+   "makan": "Catering sendiri dari sekolah (bukan MBG), bergizi.",
+   "metode": "Pembelajaran pro calistung dengan target persiapan masuk SD yang matang. Project berupa membuat karya, dipamerkan di market day setiap midterm. Outing pengenalan profesi (belum ada yang keluar jauh dari sekolah). Kegiatan outdoor gardening.",
+   "ppdb": "Tes masuk berupa pengenalan kesiapan anak.",
+   "rasio": "1 kelas 24 anak dengan 3–4 guru pendamping (sekitar 6–8 anak per guru). TK A 2 kelas, semua jenjang 2 kelas."
+  },
+  "updatedAt": 1794638460480
+ },
+ "schools/globalkids": {
+  "conclusion": "",
+  "cost": {
+   "lain": 0,
+   "lainKet": "Formulir pendaftaran Rp200 ribu dan seragam 3 pcs Rp700 ribu ",
+   "pangkal": 4750000,
+   "spp": 750000,
+   "tahunan": 2500000
+  },
+  "eval": {
+   "agama": {
+    "note": "Doa harian dan surat pendek, mengaji hanya ekskul",
+    "v": 3
+   },
+   "antar": {
+    "v": 1
+   },
+   "biaya": {
+    "v": 3
+   },
+   "effort": {
+    "note": "5 hari, bekal hanya 4 hari, tanpa worksheet dan PR",
+    "v": 4
+   },
+   "ekskul": {
+    "note": "Pilihan ekskul banyak, beberapa pentas",
+    "v": 4
+   },
+   "fasilitas": {
+    "v": 3
+   },
+   "inggris": {
+    "note": "60% pengantar bahasa Inggris, ada Mandarin",
+    "v": 5
+   },
+   "jam": {
+    "note": "Masuk 07.30, 5 hari, pulang 11.30 sehingga jeda ke les 13.30 longgar",
+    "v": 5
+   },
+   "jarak": {
+    "note": "Jarak mirip Sabilillah 1, waktu tempuh belum tercatat",
+    "v": 4
+   },
+   "karakter": {
+    "note": "Mediasi oleh guru, tanpa layanan psikologi",
+    "v": 3
+   },
+   "kurikulum": {
+    "note": "Merdeka dan Montessori",
+    "v": 4
+   },
+   "laporan": {
+    "note": "Report per 3 bulan dan ringkasan materi mingguan",
+    "v": 4
+   },
+   "makan": {
+    "note": "Bekal Senin sampai Kamis",
+    "v": 3
+   },
+   "metode": {
+    "note": "Montessori, tanpa worksheet dan PR, outing variatif",
+    "v": 5
+   },
+   "rasio": {
+    "note": "Sekitar 10 anak per guru",
+    "v": 4
+   }
+  },
+  "extra": "Ulang tahun boleh dirayakan di sekolah sekitar satu jam sebelum pulang, dengan konfirmasi dulu ke sekolah.",
+  "name": "Global Kids",
+  "order": 3,
+  "raw": {
+   "agama": "Morning prayer 15 menit: doa harian dan surat-surat pendek, ditambah nasionalisme. Religion class di hari Jumat (full). Mengaji tersedia sebagai ekstrakurikuler.",
+   "antar": "untuk TK belum ada pengantaran atau antar jemput ",
+   "biaya": "Formulir pendaftaran Rp200 ribu. Registration fee Rp4.750.000 (tercetak), dengan catatan tangan Rp4 juta. Annual development fee Rp2.600.000 per tahun (tercetak), dengan catatan tangan Rp2,5 juta. Seragam 3 pcs Rp700 ribu. SPP Kindergarten Rp750 ribu per bulan (Preschool Rp700 ribu, Preschool late morning Rp625 ribu). Ekskul Rp150 ribu per bulan. Biaya pendaftaran tidak bisa dikembalikan. Sebelumnya tercatat DP Rp4 juta bisa dicicil 3 kali dan harga naik mulai Desember. Total di rincian memakai angka catatan tangan (Rp4 juta dan Rp2,5 juta).",
+   "effort": "Sekolah 5 hari. Senin sampai Kamis bawa bekal dari rumah, Jumat makan dari sekolah. Tidak ada worksheet dan PR.",
+   "ekskul": "Ekskul pukul 12.00 sampai 13.00: mengaji, taekwondo, futsal (ABM), capoeira, dance. Biaya ekskul Rp150 ribu per bulan. Pentas di Hari Kartini dan parenting day (orang tua hadir), pentas akhir tahun, dan graduation.",
+   "fasilitas": "Ruang kelas sirkulasi udara cukup, Ruang montesori, UKS, Ruang bermain outdoor, Kolam renang mumpuni",
+   "inggris": "Sekitar 60% pengantar bahasa Inggris. Bahasa asing tambahan: Mandarin. Doa makan dalam bahasa Inggris.",
+   "jam": "Kindergarten 1 (usia 4–5 tahun) dan Kindergarten 2 (usia 5–6 tahun): Senin sampai Jumat, 07.30 sampai 11.30. Morning prayer 15 menit, masuk kelas 09.30. Ekstrakurikuler pukul 12.00 sampai 13.00.",
+   "jarak": "Sekitar 9,7 km dari rumah. Waktu tempuh belum tercatat.",
+   "karakter": "Konflik antar anak dimediasi oleh guru kelas bersama kedua anak. Kalau sudah parah, baru dibicarakan dengan orang tua. Tidak ada BK atau layanan psikologi.",
+   "kurikulum": "Kurikulum Merdeka (Diknas) dan Montessori.",
+   "laporan": "Progress report per 3 bulan, dibahas bersama orang tua. Setiap Jumat ada ringkasan materi yang akan dipelajari seminggu ke depan. Sharing dengan guru atau sekolah perlu janjian dulu.",
+   "makan": "Senin sampai Kamis bawa bekal dari rumah. Jumat makan dari sekolah.",
+   "metode": "Montessori, tanpa worksheet dan tanpa PR. Jumat senam (gym). Aqua play sebulan sekali. Outing besar: PJ Cimory, KB 1 outbound di Batu, KB 2 KidZania. Outing kecil di area Malang dengan tema profesi. Orang tua tidak ikut mendampingi saat outing.",
+   "ppdb": "Trial class, dibuka November. Penerimaan tetap berpatokan pada usia anak.",
+   "rasio": "20 siswa dengan 2 guru (sekitar 10 anak per guru)."
+  },
+  "updatedAt": 1795054085452
+ },
+ "schools/insanpermata": {
+  "conclusion": "",
+  "cost": {
+   "keg": 1450000,
+   "kegPer": "tahun",
+   "lain": 750000,
+   "lainKet": "Seragam",
+   "pangkal": 5650000,
+   "spp": 650000,
+   "tahunan": 800000
+  },
+  "eval": {
+   "agama": {
+    "note": "Target 19 surat dan 20 hadist, metode Tarbawi",
+    "v": 5
+   },
+   "antar": {
+    "note": "Tidak ada layanan antar-jemput, hanya daycare",
+    "v": 1
+   },
+   "biaya": {
+    "v": 3
+   },
+   "effort": {
+    "note": "Bekal snack, ada tugas bercerita dan PR life skill",
+    "v": 3
+   },
+   "ekskul": {
+    "note": "7 pilihan ekskul, outing variatif, kemah ceria TK B",
+    "v": 4
+   },
+   "fasilitas": {
+    "note": "Gedung dan kelas paling modern, bersih, dan bagus dari semua TK, area bermain outdoor rindang",
+    "v": 5
+   },
+   "inggris": {
+    "note": "Full bahasa Indonesia",
+    "v": 3
+   },
+   "jam": {
+    "note": "5 hari, pulang 12.00, Jumat 10.30",
+    "v": 4
+   },
+   "jarak": {
+    "note": "Paling jauh dibanding sekolah lain",
+    "v": 3
+   },
+   "karakter": {
+    "note": "Program karakter kuat, belum ada layanan psikologi",
+    "v": 4
+   },
+   "kurikulum": {
+    "note": "JSIT, Merdeka, dan Montessori",
+    "v": 4
+   },
+   "laporan": {
+    "note": "Laporan 2 mingguan, karakter 3 bulanan, rapor",
+    "v": 5
+   },
+   "makan": {
+    "note": "Bawa bekal snack",
+    "v": 3
+   },
+   "metode": {
+    "note": "Montessori, project based, banyak program literasi",
+    "v": 4
+   },
+   "rasio": {
+    "note": "Sekitar 11–12 anak per guru",
+    "v": 3
+   }
+  },
+  "extra": "Kesan trial: guru-gurunya sangat passionate, ceria, dan excited. Saat pertama kali ikut trial, Ody langsung percaya diri, ikut semangat, tidak canggung, dan menunjukkan inisiatif.\n\nNama lengkap: PAUD-IT Insan Permata. Seragam: muslim, bebas, dan batik. Komite orang tua 1–2 ayah, sekitar 10 orang. Bulan Agustus bertema nasionalisme. PR life skill di akhir pekan (menyapu, mencuci). Ada daftar murojaah hafalan untuk diulang di rumah. Grup WA orang tua tanpa nomor ustadzah. Coaching komunikasi dengan ustadzah. PCC boleh dari bidang kesiswaan.",
+  "name": "Insan Permata",
+  "order": 4,
+  "raw": {
+   "agama": "Al-Quran dan hadist sebagai dasar pembiasaan sehari-hari. Guru disebut ustadzah. Hafalan surat, hadist, doa, dan kisah Islami yang diterapkan di kehidupan sehari-hari. Target lulus: 19 surat pendek dan 20 hadist. Mengaji dengan metode Tarbawi, rancangan khusus Insan Permata. Sholat dzuhur bersama.",
+   "antar": "Tidak ada layanan antar-jemput. Yang tersedia adalah daycare. Untuk kelas reguler (tidak ikut daycare), toleransi penjemputan hanya 1 jam setelah pulang. Lebih dari 1 jam dikenakan biaya tambahan.",
+   "biaya": "Jariyah pendidikan Rp5.650.000. SPP Rp650 ribu per bulan. Uang kegiatan Rp1.450.000 per tahun. Peralatan Rp800 ribu per tahun. Seragam Rp750 ribu sekali bayar. Daycare dan biaya keterlambatan jemput di luar ini.",
+   "effort": "Sekolah 5 hari. Bawa bekal snack sehat. Program Ayah Bunda Bercerita: orang tua bergiliran bercerita 15 menit di sekolah. PR life skill tiap akhir pekan. Ada daftar murojaah hafalan di rumah. Sekolah orang tua (parenting dan webinar) sebulan sekali.",
+   "ekskul": "Pilihan ekskul: mini soccer, menari, menyanyi, menggambar, perkusi, drama, dan angklung. Ekskul hari Jumat setelah 10.30, olahraga dan seni sesuai potensi anak. Studi visual lewat outing sesuai materi: Secret Zoo, Museum Bagong, KidZania (profesi). Kemah ceria untuk TK B (menginap) untuk menumbuhkan keberanian dan kemandirian.",
+   "fasilitas": "Gedung dan fasilitas kelasnya paling modern, bersih, dan bagus dibanding semua TK yang sudah dikunjungi. Fasilitas bermain sangat bagus, berada di area outdoor tapi tetap rindang dan tidak panas. Fasilitas permainan pembelajaran di dalam kelas juga bagus dan lengkap.",
+   "inggris": "ada pembelajaran bahasa inggris namun hanya  disisipkan saja tidak fullday",
+   "jam": "Senin sampai Kamis 07.15 sampai 12.00, Jumat 07.15 sampai 10.30 lalu ekskul. Pagi diawali 1 jam adaptasi (bebas main). Kegiatan inti 10.00 sampai 11.15. Hari ditutup makan siang dan sholat dzuhur atau kisah Islam. Kelas reguler punya toleransi penjemputan 1 jam, lebih dari itu dikenakan biaya. Tersedia daycare.",
+   "jarak": "Sekitar 11,3 km dari rumah. Jarak tempuh mobil kurang lebih 35 menit",
+   "karakter": "Fokus nilai karakter berbasis Al-Quran. Laporan karakter tiap 3 bulan. Kasus bully dimediasi oleh wali kelas. Home visit dengan izin orang tua. Belum tercatat ada layanan psikologi.",
+   "kurikulum": "JSIT dan Kurikulum Merdeka, dengan nilai-nilai karakter dari Al-Quran dan hadist yang dibiasakan sehari-hari (adab tidur, mandi, dan lainnya). Montessori dan bermain sebagai pendekatan utama.",
+   "laporan": "Laporan perkembangan 2 minggu sekali lewat Drive. Laporan karakter 3 bulan sekali. Rapor per semester. Sekolah orang tua sebulan sekali. Ada komite orang tua.",
+   "makan": "Bawa bekal snack sehat. Ada sesi makan siang di sekolah, belum jelas apakah disediakan sekolah atau bawa sendiri.",
+   "metode": "Belajar lewat bermain: anak dibiarkan menuntaskan dulu kebutuhan bermainnya supaya lebih cepat fokus saat belajar, dan materinya disampaikan di dalam permainan itu sendiri. Kebutuhan anak untuk bermain sangat terakomodasi, dan proses belajarnya terlihat sangat menarik. Montessori dan bermain (utama). Project based learning di kegiatan inti dengan tema harian (lingkungan, kesehatan), diakhiri presentasi ke ustadzah dan teman. TK B ada SLC (project sendiri) yang dihadiri orang tua. Stimulasi gerak kasar 30 menit setiap hari. Belajar membaca dengan metode phonics (fonik): mengenal bunyi huruf supaya anak paham apa yang dibaca. Jurnal menggambar lalu dipresentasikan. ADATA: di semester 2 anak membuat buku cerita sendiri. Life skill (mengelap, mencuci kaos kaki). Stimulasi awal (SAT). Program anti korupsi bekerja sama dengan KPK. Target: anak siap bersekolah dan siap duduk di kursi saat SD. Catatan harian untuk di rumah: PR akhir pekan berupa kegiatan life skill (menyapu, mencuci), dan catatan record hafalan Al-Quran atau murojaah.",
+   "ppdb": "Observasi tumbuh kembang dan wawancara sekolah. Ody sudah ikut trial dan langsung percaya diri, semangat, dan berinisiatif.",
+   "rasio": "23 anak per kelas dengan 2 guru (sekitar 11–12 anak per guru). Ada 3 kelas."
+  },
+  "updatedAt": 1794642145228
+ },
+ "schools/sabilillah1": {
+  "conclusion": "",
+  "cost": {
+   "keg": 860000,
+   "kegPer": "semester",
+   "lain": 1815000,
+   "lainKet": "Pendaftaran Rp450 ribu dan seragam Rp1.365.000",
+   "pangkal": 12000000,
+   "spp": 935000
+  },
+  "eval": {
+   "agama": {
+    "note": "Target jelas dan terukur",
+    "v": 5
+   },
+   "antar": {
+    "note": "Biaya belum diketahui",
+    "v": 5
+   },
+   "biaya": {
+    "note": "Total 2 tahun hampir sama dengan Al-Ya’lu",
+    "v": 2
+   },
+   "effort": {
+    "note": "6 hari, berangkat 06.15, bekal harian, market day, dan pengajian akhir pekan",
+    "v": 2
+   },
+   "ekskul": {
+    "note": "",
+    "v": 4
+   },
+   "fasilitas": {
+    "note": "Playground baru dan modern, TV besar interaktif layar sentuh di kelas. Kolam renang agak jauh.",
+    "v": 4
+   },
+   "inggris": {
+    "note": "Cambridge, multilingual, native speaker",
+    "v": 5
+   },
+   "jam": {
+    "note": "Jeda ke les 13.30 cukup, tapi masuk pagi sekali dan sekolah 6 hari",
+    "v": 3
+   },
+   "jarak": {
+    "note": "30 menit sekali jalan",
+    "v": 3
+   },
+   "karakter": {
+    "note": "Ada konsultasi psikologi",
+    "v": 5
+   },
+   "kurikulum": {
+    "note": "",
+    "v": 4
+   },
+   "laporan": {
+    "note": "Harian dan bulanan",
+    "v": 5
+   },
+   "makan": {
+    "note": "Bawa bekal sendiri, orang tua perlu menyiapkan tiap hari",
+    "v": 3
+   },
+   "metode": {
+    "note": "Project based paling komprehensif dan terstruktur dari semua TK, sentra harian, project sesuai minat",
+    "v": 5
+   },
+   "rasio": {
+    "note": "Sekitar 11 anak per guru",
+    "v": 3
+   }
+  },
+  "extra": "Kesan trial: saat pertama kali ikut trial, Ody langsung percaya diri, ikut semangat, tidak canggung, dan menunjukkan inisiatif.",
+  "name": "Sabilillah 1",
+  "order": 1,
+  "raw": {
+   "agama": "Sholat dan wudhu dengan bacaan dan sunnah yang benar, sholat sunnah hanya Jumat. Target mengaji TK B khatam Jilid 2 lalu tashih. Hafalan 15 surat. Mengaji langsung dengan guru mengaji. SKL SD: wajib tashih tartil dan hafal Juz 30.",
+   "antar": "Ada layanan antar-jemput. Biaya belum diketahui.",
+   "biaya": "Infaq pembangunan Rp12 juta. Pendaftaran Rp450 ribu. Seragam Rp1.365.000 sekali bayar. SPP Rp935 ribu per bulan. Uang kegiatan Rp860 ribu per semester. Uang annual belum diketahui. Biaya tambahan kostum dan toga untuk wisuda Quran dan pelepasan (tidak dihitung).",
+   "effort": "Sekolah 6 hari (Senin sampai Sabtu). Harus berangkat sekitar 06.15 setiap pagi. Bekal disiapkan sendiri setiap hari. Kemungkinan ada market day 3 bulan sekali: anak membuat produk untuk dijual secara berkelompok, dan orang tua ikut repot menyiapkannya. Ada pengajian 2 minggu sekali di akhir pekan untuk orang tua. Ada layanan antar-jemput, biaya belum diketahui.",
+   "ekskul": "Ekskul wajib drum band (peran dipetakan guru). Pilihan: tartil, tari, mewarnai, vokal. Outing 5 kali setahun. TK B bisa tampil di Simfoni Anak Bangsa, Graha Cakrawala. Wisuda Quran dan pelepasan.",
+   "fasilitas": "Di dalam kelas sudah ada TV besar interaktif yang bisa disentuh (touch screen). Ada 2 playground, semuanya indoor: satu di area awal masuk, satu lagi di tengah halaman sekolah yang lebih besar, baru, dan cukup modern. Kolam renang ada, tapi di gedung sekolah terpisah sekitar 2 km.",
+   "inggris": "Cambridge No. 3 (di TK tidak sampai tahap evaluasi). Ada kelas multilingual. Native speaker selama 1 bulan, 1 minggu penuh di setiap kelas TK.",
+   "jam": "Sekolah Senin sampai Sabtu. Masuk 06.50 (toleransi sampai 07.00), pulang 11.50. Sampai rumah sekitar 12.20, masih ada jeda sekitar 1 jam sebelum les bahasa Inggris 13.30. Sabtu pagi ada leadership class.",
+   "jarak": "Sekitar 9,4 km, kurang lebih 30 menit dari rumah.",
+   "karakter": "Bulan pertama TK untuk pembentukan karakter: adab, cara guru memperlakukan anak, aturan kelas dibuat bersama (cross your legs, keep your hands to yourself). Pemetaan pola asuh di rumah. BKSD untuk konsultasi psikologi. Kepemimpinan bergilir tiap bulan.",
+   "kurikulum": "Kurikulum Merdeka, pembelajaran pro calistung, Islamic based, project based, dan pendidikan karakter. Bahasa Inggris memakai Cambridge No. 3.",
+   "laporan": "Laporan akademik dan non-akademik digital, bulanan dan harian. Laporan harian berisi mengaji, membaca, buku cerita, dan jurnal. Orang tua terlibat dalam pelaporan project.",
+   "makan": "Anak membawa bekal sendiri dari rumah. Ada makan bersama 2 kali sebulan (masuk uang kegiatan).",
+   "metode": "Project based learning yang dijalankan secara utuh dan berkelompok: anak berdiskusi menentukan topik, melakukan riset bersama, lalu mempresentasikan hasilnya di depan orang tua dan wali murid. Dibanding semua TK yang sudah dikunjungi, program project based di sini paling komprehensif dan terstruktur. Pembelajaran pro calistung, Islamic based, dan pendidikan karakter. Moving class model sentra setiap hari (peran, balok, bahan alam). Ada kelas coding. My Project: outing, kelompok sesuai minat anak, project 2 minggu, presentasi karya, paper di akhir. Leadership class Sabtu pagi.",
+   "ppdb": "Wawancara kesiapan belajar anak dan orang tua: bahasa, motorik, kognitif. Ody sudah ikut trial dan langsung percaya diri, semangat, dan berinisiatif.",
+   "rasio": "2 kelas TK, masing-masing 22 anak dengan 2 pendamping (sekitar 11 anak per guru)."
+  },
+  "updatedAt": 1794633015532
+ },
+ "settings/app": {
+  "criteria": [
+   {
+    "group": "Logistik",
+    "hint": "Berapa km dan berapa menit dari rumah?",
+    "id": "jarak",
+    "label": "Jarak & waktu tempuh",
+    "type": "score",
+    "weight": 2
+   },
+   {
+    "group": "Logistik",
+    "hint": "Jam masuk dan pulang. Cukup jeda untuk les bahasa Inggris jam 13.30?",
+    "id": "jam",
+    "label": "Jam sekolah",
+    "type": "score",
+    "weight": 3
+   },
+   {
+    "group": "Logistik",
+    "hint": "Ada layanan antar-jemput? Jangkauannya sampai mana?",
+    "id": "antar",
+    "label": "Layanan antar-jemput",
+    "type": "yesno",
+    "weight": 1
+   },
+   {
+    "group": "Logistik",
+    "hint": "Seberapa berat rutinitas antar, bekal, dan acara sekolah untuk orang tua?",
+    "id": "effort",
+    "label": "Effort harian orang tua",
+    "type": "effort",
+    "weight": 2
+   },
+   {
+    "group": "Pembelajaran",
+    "hint": "Kurikulum apa yang dipakai?",
+    "id": "kurikulum",
+    "label": "Kurikulum",
+    "type": "score",
+    "weight": 2
+   },
+   {
+    "group": "Pembelajaran",
+    "hint": "Ada pelajaran bahasa Inggris, native speaker, atau program bilingual?",
+    "id": "inggris",
+    "label": "Bahasa Inggris & bilingual",
+    "type": "score",
+    "weight": 2
+   },
+   {
+    "group": "Pembelajaran",
+    "hint": "Target mengaji, hafalan, dan praktik ibadah.",
+    "id": "agama",
+    "label": "Pendidikan agama & mengaji",
+    "type": "score",
+    "weight": 3
+   },
+   {
+    "group": "Pembelajaran",
+    "hint": "Sentra, project, outing, cara guru mengajar.",
+    "id": "metode",
+    "label": "Metode belajar & project",
+    "type": "score",
+    "weight": 2
+   },
+   {
+    "group": "Pembelajaran",
+    "hint": "Ekskul wajib dan pilihan, pentas, wisuda.",
+    "id": "ekskul",
+    "label": "Ekstrakurikuler & acara",
+    "type": "score",
+    "weight": 1
+   },
+   {
+    "group": "Perhatian ke anak",
+    "hint": "Berapa anak per kelas dan berapa guru pendamping?",
+    "id": "rasio",
+    "label": "Rasio guru dan anak",
+    "type": "score",
+    "weight": 2
+   },
+   {
+    "group": "Perhatian ke anak",
+    "hint": "Ada program adab, aturan kelas, atau layanan konsultasi psikologi?",
+    "id": "karakter",
+    "label": "Pembentukan karakter & psikologi",
+    "type": "score",
+    "weight": 2
+   },
+   {
+    "group": "Perhatian ke anak",
+    "hint": "Seberapa sering laporan? Ada pertemuan dengan orang tua?",
+    "id": "laporan",
+    "label": "Laporan & komunikasi orang tua",
+    "type": "score",
+    "weight": 1
+   },
+   {
+    "group": "Lingkungan",
+    "hint": "Bagaimana ruang kelas, area outdoor, dan taman bermainnya?",
+    "id": "fasilitas",
+    "label": "Fasilitas & ruang bermain",
+    "type": "score",
+    "weight": 2
+   },
+   {
+    "group": "Lingkungan",
+    "hint": "Catering dari sekolah atau bawa bekal dari rumah?",
+    "id": "makan",
+    "label": "Makan",
+    "type": "score",
+    "weight": 1
+   },
+   {
+    "group": "Biaya & pendaftaran",
+    "hint": "Berapa uang pangkal, SPP, uang kegiatan, dan biaya tambahan?",
+    "id": "biaya",
+    "label": "Biaya",
+    "type": "biaya",
+    "weight": 3
+   }
+  ],
+  "years": 2
+ }
+};
+function localDb(){
+  const KEY = "ody-mencari-sekolah:db:v1";
+  let store = null;
+  try { store = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+  if (!store || typeof store !== "object") store = JSON.parse(JSON.stringify(SEED));
+  const docL = {}, colL = {};
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} };
+  const docSnap = p => ({exists: p in store, data: () => JSON.parse(JSON.stringify(store[p]))});
+  const colSnap = c => ({docs: Object.keys(store).filter(k => k.startsWith(c + "/") && k.split("/").length === 2)
+    .map(k => ({id: k.split("/")[1], data: () => JSON.parse(JSON.stringify(store[k]))}))});
+  const emit = p => {
+    (docL[p] || []).forEach(cb => cb(docSnap(p)));
+    const c = p.split("/")[0]; (colL[c] || []).forEach(cb => cb(colSnap(c)));
+  };
+  return {
+    doc: p => ({
+      set: d => { store[p] = JSON.parse(JSON.stringify(d)); persist(); setTimeout(() => emit(p)); return Promise.resolve(); },
+      delete: () => { delete store[p]; persist(); setTimeout(() => emit(p)); return Promise.resolve(); },
+      onSnapshot: cb => { (docL[p] = docL[p] || []).push(cb); setTimeout(() => cb(docSnap(p))); }
+    }),
+    collection: c => ({
+      onSnapshot: cb => { (colL[c] = colL[c] || []).push(cb); setTimeout(() => cb(colSnap(c))); }
+    }),
+    reset: () => { try { localStorage.removeItem(KEY); } catch(e) {} location.reload(); }
+  };
+}
+
 /* ---------- init ---------- */
 async function init(){
   const h = location.hash.slice(1);
@@ -1353,11 +1977,7 @@ async function init(){
   render();
   const timer = setTimeout(() => { if (state.loading) { state.loading = false; state.note = "Data belum bisa dimuat. Periksa koneksi, lalu buka ulang halaman ini."; render(); } }, 10000);
   try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch(e) { db = null; }
-  if (!db) {
-    clearTimeout(timer); state.loading = false;
-    state.note = "Penyimpanan tidak tersedia di tampilan ini. Kamu tetap bisa mencoba aplikasinya, tapi perubahan tidak akan tersimpan.";
-    setStatus("local"); render(); return;
-  }
+  if (!db) db = localDb();
   setStatus("saved");
   db.doc("settings/app").onSnapshot(snap => {
     if (critTimer) return;
