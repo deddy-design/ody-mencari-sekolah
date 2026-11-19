@@ -593,6 +593,19 @@ dialog.wide{width:min(1040px,94vw);max-height:88vh}
 .dot{font-size:10px;letter-spacing:-.02em}
 .kavatars span{font-size:10px;letter-spacing:-.02em}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* mobile bottom nav: same pill as the desktop header */
+@media (max-width:640px){
+  .tabbar{display:flex;justify-content:center;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border-top:0;padding:0 16px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+  .tabbar .tabs{pointer-events:auto;display:flex;width:100%;max-width:440px;padding:5px;background:var(--navbg);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);box-shadow:0 0 0 .5px var(--sep),0 8px 24px rgba(0,0,0,.18)}
+  .tabbar .tabind{top:5px;bottom:5px}
+  .tabbar .tabs button{flex:1 1 0;min-width:0;min-height:44px;padding:8px 6px;font-size:15px;gap:6px;flex-direction:row;color:var(--label)}
+  .tabbar .tabs button:not([aria-current="page"]):hover{color:var(--label)}
+  .tabbar .badge{position:static;height:20px;min-width:20px;font-size:12px}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:400px){ .tabbar .tabs button{font-size:14px;gap:4px;padding:8px 4px} }
+@media (max-width:340px){ .tabbar .tabs button > span[aria-hidden]{display:none} }
 </style>
 </head>
 <body>
@@ -777,7 +790,8 @@ function render(){
   if ($("#tabbtns").innerHTML !== tabsHTML) $("#tabbtns").innerHTML = tabsHTML;
   requestAnimationFrame(moveTabInd);
 
-  $("#tabbar").innerHTML = tabs.map(([v,i,l,b]) => `<button type="button" data-act="view" data-v="${v}" aria-current="${state.view === v ? "page" : "false"}"><span class="ti" aria-hidden="true">${i}</span>${l === "Data sekolah" ? "Sekolah" : l}${b}</button>`).join("");
+  if (!$("#tabbar .tabs")) $("#tabbar").innerHTML = `<div class="tabs"><span class="tabind noanim" aria-hidden="true"></span><div style="display:contents" class="tabbtns"></div></div>`;
+  if ($("#tabbar .tabbtns").innerHTML !== tabsHTML) $("#tabbar .tabbtns").innerHTML = tabsHTML;
   $("#subbar").innerHTML = state.view === "sekolah" && !state.loading ? subbarSchool() : "";
   const app = $("#app");
   if (state.loading) { app.innerHTML = `<p class="loading">Memuat data…</p>`; return; }
@@ -794,11 +808,12 @@ function render(){
   }
   window.scrollTo(0, y);
 }
-function moveTabInd(){ const ind = $(".tabind"), act = $('#tabbtns [aria-current="page"]'); if (!ind || !act || !act.offsetWidth) return;
+function moveTabInd(){ document.querySelectorAll(".tabs").forEach(bar => {
+  const ind = bar.querySelector(".tabind"), act = bar.querySelector('[aria-current="page"]'); if (!ind || !act || !act.offsetWidth) return;
   const first = !ind.dataset.ready;
   if (first) ind.classList.add("noanim");
   ind.style.width = act.offsetWidth + "px"; ind.style.transform = `translateX(${act.offsetLeft}px)`;
-  if (first) { void ind.offsetWidth; ind.dataset.ready = "1"; requestAnimationFrame(() => ind.classList.remove("noanim")); } }
+  if (first) { void ind.offsetWidth; ind.dataset.ready = "1"; requestAnimationFrame(() => ind.classList.remove("noanim")); } }); }
 window.addEventListener("resize", () => requestAnimationFrame(moveTabInd));
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveTabInd());
 /* drag-to-slide for mouse on horizontal card rows */
